@@ -1,6 +1,5 @@
 package com.example.final_pam.model
 
-import com.example.session12.model.Mahasiswa
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,12 +16,12 @@ data class Aset(
 data class AllAsetResponse(
     val status: Boolean,
     val message: String,
-    val data: List<Mahasiswa>
+    val data: List<Aset>
 )
 
 @Serializable
 data class AsetDetailResponse(
     val status: Boolean,
     val message: String,
-    val data: Mahasiswa
+    val data: Aset
 )
