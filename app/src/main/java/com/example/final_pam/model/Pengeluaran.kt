@@ -25,14 +25,14 @@ data class Pengeluaran(
 )
 
 @Serializable
-data class AllPendapatanResponse(
+data class AllPengeluaranResponse(
     val status: Boolean,
     val message: String,
     val data: List<Aset>
 )
 
 @Serializable
-data class PendapatanDetailResponse(
+data class PengeluaranDetailResponse(
     val status: Boolean,
     val message: String,
     val data: Aset
