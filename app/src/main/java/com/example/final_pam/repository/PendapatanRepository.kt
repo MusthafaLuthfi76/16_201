@@ -2,7 +2,8 @@ package com.example.final_pam.repository
 
 import com.example.final_pam.model.AllPendapatanResponse
 import com.example.final_pam.model.Pendapatan
-import java.io.IOException
+import com.example.final_pam.service.PendapatanService
+import okio.IOException
 
 interface PendapatanRepository {
     suspend fun getPendapatan(): AllPendapatanResponse
