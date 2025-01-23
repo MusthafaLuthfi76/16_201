@@ -9,6 +9,6 @@ class KeuanganApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        container = KeuanganContainer() // Menggunakan AsetContainer untuk mengatur dependensi terkait aset
+        container = KeuanganContainer() // Menggunakan KeuanganContainer untuk mengatur dependensi terkait aset
     }
 }
