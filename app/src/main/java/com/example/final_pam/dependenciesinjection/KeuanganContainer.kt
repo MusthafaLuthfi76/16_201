@@ -13,7 +13,7 @@ interface AppContainer {
 }
 
 // AsetContainer akan mengimplementasikan AppContainer untuk menyediakan dependensi
-class AsetContainer : AppContainer {
+class KeuanganContainer : AppContainer {
     private val baseUrl = "http://10.0.2.2:3000/api/"
     private val json = Json { ignoreUnknownKeys = true }
     private val retrofit: Retrofit = Retrofit.Builder()
