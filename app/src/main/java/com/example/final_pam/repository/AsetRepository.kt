@@ -1,5 +1,9 @@
 package com.example.final_pam.repository
 
+import com.example.final_pam.model.AllAsetResponse
+import com.example.final_pam.model.Aset
+import com.example.final_pam.service.AsetService
+import java.io.IOException
 
 interface AsetRepository {
     suspend fun getAset(): AllAsetResponse
