@@ -28,12 +28,12 @@ data class Pengeluaran(
 data class AllPengeluaranResponse(
     val status: Boolean,
     val message: String,
-    val data: List<Aset>
+    val data: List<Pengeluaran>
 )
 
 @Serializable
 data class PengeluaranDetailResponse(
     val status: Boolean,
     val message: String,
-    val data: Aset
+    val data: Pengeluaran
 )

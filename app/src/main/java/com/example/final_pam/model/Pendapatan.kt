@@ -28,12 +28,12 @@ data class Pendapatan(
 data class AllPendapatanResponse(
     val status: Boolean,
     val message: String,
-    val data: List<Aset>
+    val data: List<Pendapatan>
 )
 
 @Serializable
 data class PendapatanDetailResponse(
     val status: Boolean,
     val message: String,
-    val data: Aset
+    val data: Pendapatan
 )
