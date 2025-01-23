@@ -1,5 +1,16 @@
 package com.example.final_pam.dependenciesinjection
 import com.example.final_pam.repository.AsetRepository
+import com.example.final_pam.repository.KategoriRepository
+import com.example.final_pam.repository.NetworkAsetRepository
+import com.example.final_pam.repository.NetworkKategoriRepository
+import com.example.final_pam.repository.NetworkPendapatanRepository
+import com.example.final_pam.repository.NetworkPengeluaranRepository
+import com.example.final_pam.repository.PendapatanRepository
+import com.example.final_pam.repository.PengeluaranRepository
+import com.example.final_pam.service.AsetService
+import com.example.final_pam.service.KategoriService
+import com.example.final_pam.service.PendapatanService
+import com.example.final_pam.service.PengeluaranService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
