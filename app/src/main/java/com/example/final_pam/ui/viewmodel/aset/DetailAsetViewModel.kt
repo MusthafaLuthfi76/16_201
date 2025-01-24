@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.model.Aset
 import com.example.final_pam.repository.AsetRepository
-import com.example.final_pam.ui.view.DestinasiDetail
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -27,7 +26,7 @@ class DetailAsetViewModel(
     var asetDetailState: DetailAsetUiState by mutableStateOf(DetailAsetUiState.Loading)
         private set
 
-    private val _idAset: Int = checkNotNull(savedStateHandle[DestinasiDetail.ID_ASET])
+    private val _idAset: Int = checkNotNull(savedStateHandle[DestinasiDetailAset.ID_ASET])
 
     init {
         getAsetById()
@@ -47,7 +46,7 @@ class DetailAsetViewModel(
         }
     }
 
-    fun deleteAset(idAset: String) {
+    fun deleteAset(idAset: Int) {
         viewModelScope.launch {
             try {
                 asetRepository.deleteAset(idAset)

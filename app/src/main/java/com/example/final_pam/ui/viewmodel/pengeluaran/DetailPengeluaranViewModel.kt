@@ -26,7 +26,7 @@ class DetailPengeluaranViewModel(
     var pengeluaranDetailState: DetailPengeluaranUiState by mutableStateOf(DetailPengeluaranUiState.Loading)
         private set
 
-    private val _idPengeluaran: Int = checkNotNull(savedStateHandle["id_pengeluaran"])
+    private val _idPengeluaran: Int = checkNotNull(savedStateHandle[DestinasiDetailPengeluaran.ID_PENGELUARAN])
 
     init {
         getPengeluaranById()

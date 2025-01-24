@@ -25,7 +25,7 @@ class DetailKategoriViewModel(
     var kategoriDetailState: DetailKategoriUiState by mutableStateOf(DetailKategoriUiState.Loading)
         private set
 
-    private val _idKategori: Int = checkNotNull(savedStateHandle["id_kategori"])
+    private val _idKategori: Int = checkNotNull(savedStateHandle[DestinasiDetailKategori.ID_KATEGORI])
 
     init {
         getKategoriById()

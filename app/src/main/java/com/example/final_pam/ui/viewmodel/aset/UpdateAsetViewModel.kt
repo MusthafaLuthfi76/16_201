@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.repository.AsetRepository
+import com.example.final_pam.ui.view.aset.DestinasiUpdateAset
 import com.example.final_pam.ui.viewmodel.aset.InsertAsetUiEvent
 import com.example.final_pam.ui.viewmodel.aset.InsertAsetUiState
 import com.example.final_pam.ui.viewmodel.aset.toAset
@@ -19,7 +20,7 @@ class UpdateAsetViewModel (
         private set
 
     // Ambil idAset dari SavedStateHandle, ganti NIM dengan idAset
-    private val _idAset: Int = checkNotNull(savedStateHandle[DestinasiUpdate.ID_ASET])
+    private val _idAset: Int = checkNotNull(savedStateHandle[DestinasiUpdateAset.ID_ASET])
 
     init {
         viewModelScope.launch {

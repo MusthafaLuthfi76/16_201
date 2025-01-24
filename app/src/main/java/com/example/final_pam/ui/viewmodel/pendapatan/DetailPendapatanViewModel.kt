@@ -26,7 +26,7 @@ class DetailPendapatanViewModel(
     var pendapatanDetailState: DetailPendapatanUiState by mutableStateOf(DetailPendapatanUiState.Loading)
         private set
 
-    private val _idPendapatan: Int = checkNotNull(savedStateHandle["id_pendapatan"])
+    private val _idPendapatan: Int = checkNotNull(savedStateHandle[DestinasiDetailPendapatan.ID_PENDAPATAN])
 
     init {
         getPendapatanById()
