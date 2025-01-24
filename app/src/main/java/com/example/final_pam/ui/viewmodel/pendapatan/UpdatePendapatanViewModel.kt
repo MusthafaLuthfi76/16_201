@@ -6,36 +6,40 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.final_pam.model.Pendapatan
 import com.example.final_pam.repository.PendapatanRepository
-import com.example.final_pam.ui.view.DestinasiUpdate
+import com.example.final_pam.ui.viewmodel.InsertPendapatanUiEvent
+import com.example.final_pam.ui.viewmodel.InsertPendapatanUiState
+import com.example.final_pam.ui.viewmodel.toPendapatan
+import com.example.final_pam.ui.viewmodel.toUiStatePendapatan
 import kotlinx.coroutines.launch
 
 class UpdatePendapatanViewModel(
     savedStateHandle: SavedStateHandle,
     private val pendapatanRepository: PendapatanRepository
-) : ViewModel() {
-
-    var updateUiState by mutableStateOf(UpdatePendapatanUiState())
+): ViewModel() {
+    var updateUiState by mutableStateOf(InsertPendapatanUiState())
         private set
 
-    private val _idPendapatan: String = checkNotNull(savedStateHandle[DestinasiUpdate.ID_PENDAPATAN])
+    // Ambil idPendapatan dari SavedStateHandle
+    private val _idPendapatan: Int = checkNotNull(savedStateHandle[DestinasiUpdate.ID_PENDAPATAN])
 
     init {
         viewModelScope.launch {
+            // Ambil data pendapatan berdasarkan idPendapatan
             updateUiState = pendapatanRepository.getPendapatanById(_idPendapatan)
                 .toUiStatePendapatan()
         }
     }
 
-    fun updatePendapatanState(updatePendapatanEvent: UpdatePendapatanUiEvent) {
-        updateUiState = UpdatePendapatanUiState(updatePendapatanEvent = updatePendapatanEvent)
+    fun updateInsertPendapatanState(insertUiEvent: InsertPendapatanUiEvent) {
+        updateUiState = InsertPendapatanUiState(insertUiEvent = insertUiEvent)
     }
 
     suspend fun updatePendapatan() {
         viewModelScope.launch {
             try {
-                pendapatanRepository.updatePendapatan(_idPendapatan, updateUiState.updatePendapatanEvent.toPendapatan())
+                // Perbarui data pendapatan berdasarkan idPendapatan
+                pendapatanRepository.updatePendapatan(_idPendapatan, updateUiState.insertUiEvent.toPendapatan())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -43,37 +47,3 @@ class UpdatePendapatanViewModel(
     }
 }
 
-data class UpdatePendapatanUiState(
-    val updatePendapatanEvent: UpdatePendapatanUiEvent = UpdatePendapatanUiEvent()
-)
-
-data class UpdatePendapatanUiEvent(
-    val idPendapatan: String = "",
-    val idAset: String = "",
-    val idKategori: String = "",
-    val tglTransaksi: String = "",
-    val total: String = "",
-    val catatan: String = ""
-)
-
-fun UpdatePendapatanUiEvent.toPendapatan(): Pendapatan = Pendapatan(
-    idPendapatan = idPendapatan,
-    idAset = idAset,
-    idKategori = idKategori,
-    tglTransaksi = tglTransaksi,
-    total = total,
-    catatan = catatan
-)
-
-fun Pendapatan.toUiStatePendapatan(): UpdatePendapatanUiState = UpdatePendapatanUiState(
-    updatePendapatanEvent = toUpdatePendapatanUiEvent()
-)
-
-fun Pendapatan.toUpdatePendapatanUiEvent(): UpdatePendapatanUiEvent = UpdatePendapatanUiEvent(
-    idPendapatan = idPendapatan,
-    idAset = idAset,
-    idKategori = idKategori,
-    tglTransaksi = tglTransaksi,
-    total = total,
-    catatan = catatan
-)

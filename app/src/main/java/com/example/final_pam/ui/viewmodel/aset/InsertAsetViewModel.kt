@@ -33,7 +33,7 @@ data class InsertAsetUiState(
 )
 
 data class InsertAsetUiEvent(
-    val idAset: String = "",
+    val idAset: Int = 0,
     val namaAset: String = "",
     val nilaiAset: Double = 0.0
 )

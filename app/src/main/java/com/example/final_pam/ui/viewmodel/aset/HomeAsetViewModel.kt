@@ -38,7 +38,7 @@ class HomeAsetViewModel(private val asetRepository: AsetRepository) : ViewModel(
         }
     }
 
-    fun deleteAset(idAset: String) {
+    fun deleteAset(idAset: Int) {
         viewModelScope.launch {
             try {
                 asetRepository.deleteAset(idAset)

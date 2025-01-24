@@ -38,7 +38,7 @@ class HomePendapatanViewModel(private val pendapatanRepository: PendapatanReposi
         }
     }
 
-    fun deletePendapatan(idPendapatan: String) {
+    fun deletePendapatan(idPendapatan: Int) {
         viewModelScope.launch {
             try {
                 pendapatanRepository.deletePendapatan(idPendapatan)

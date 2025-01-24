@@ -26,7 +26,7 @@ class DetailPendapatanViewModel(
     var pendapatanDetailState: DetailPendapatanUiState by mutableStateOf(DetailPendapatanUiState.Loading)
         private set
 
-    private val _idPendapatan: String = checkNotNull(savedStateHandle["id_pendapatan"])
+    private val _idPendapatan: Int = checkNotNull(savedStateHandle["id_pendapatan"])
 
     init {
         getPendapatanById()
@@ -46,7 +46,7 @@ class DetailPendapatanViewModel(
         }
     }
 
-    fun deletePendapatan(idPendapatan: String) {
+    fun deletePendapatan(idPendapatan: Int) {
         viewModelScope.launch {
             try {
                 pendapatanRepository.deletePendapatan(idPendapatan)

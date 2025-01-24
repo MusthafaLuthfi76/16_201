@@ -27,7 +27,7 @@ class DetailAsetViewModel(
     var asetDetailState: DetailAsetUiState by mutableStateOf(DetailAsetUiState.Loading)
         private set
 
-    private val _idAset: String = checkNotNull(savedStateHandle[DestinasiDetail.ID_ASET])
+    private val _idAset: Int = checkNotNull(savedStateHandle[DestinasiDetail.ID_ASET])
 
     init {
         getAsetById()

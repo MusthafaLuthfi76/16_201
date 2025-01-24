@@ -25,7 +25,7 @@ class DetailKategoriViewModel(
     var kategoriDetailState: DetailKategoriUiState by mutableStateOf(DetailKategoriUiState.Loading)
         private set
 
-    private val _idKategori: String = checkNotNull(savedStateHandle["id_kategori"])
+    private val _idKategori: Int = checkNotNull(savedStateHandle["id_kategori"])
 
     init {
         getKategoriById()
@@ -45,7 +45,7 @@ class DetailKategoriViewModel(
         }
     }
 
-    fun deleteKategori(idKategori: String) {
+    fun deleteKategori(idKategori: Int) {
         viewModelScope.launch {
             try {
                 kategoriRepository.deleteKategori(idKategori)

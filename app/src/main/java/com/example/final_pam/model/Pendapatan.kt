@@ -12,7 +12,7 @@ data class Pendapatan(
     val idAset: Int,
 
     @SerialName("Id_kategori")
-    val idKategori: String,
+    val idKategori: Int,
 
     @SerialName("Tanggal_transaksi")
     val tglTransaksi: String,

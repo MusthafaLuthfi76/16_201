@@ -33,11 +33,11 @@ data class InsertPengeluaranUiState(
 )
 
 data class InsertPengeluaranUiEvent(
-    val idPengeluaran: String = "",
-    val idAset: String = "",
-    val idKategori: String = "",
+    val idPengeluaran: Int = 0,
+    val idAset: Int = 0,
+    val idKategori: Int = 0,
     val tglTransaksi: String = "",
-    val total: String = "",
+    val total: Int = 0,
     val catatan: String = ""
 )
 

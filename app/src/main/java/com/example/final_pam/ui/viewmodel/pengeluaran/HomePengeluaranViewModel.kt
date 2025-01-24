@@ -38,7 +38,7 @@ class HomePengeluaranViewModel(private val pengeluaranRepository: PengeluaranRep
         }
     }
 
-    fun deletePengeluaran(idPengeluaran: String) {
+    fun deletePengeluaran(idPengeluaran: Int) {
         viewModelScope.launch {
             try {
                 pengeluaranRepository.deletePengeluaran(idPengeluaran)

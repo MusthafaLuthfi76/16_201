@@ -33,7 +33,7 @@ data class InsertKategoriUiState(
 )
 
 data class InsertKategoriUiEvent(
-    val idKategori: String = "",
+    val idKategori: Int = 0,
     val namaKategori: String = ""
 )
 
