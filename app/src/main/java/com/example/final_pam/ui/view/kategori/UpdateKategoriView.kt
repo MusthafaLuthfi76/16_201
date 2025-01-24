@@ -1,4 +1,4 @@
-package com.example.final_pam.ui.view.aset
+package com.example.final_pam.ui.view.kategori
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,26 +12,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.ui.customwidget.CostumeTopAppBar
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
 import com.example.final_pam.ui.viewmodel.PenyediaViewModel
-import com.example.final_pam.ui.viewmodel.aset.InsertAsetUiState
+import com.example.final_pam.ui.viewmodel.kategori.UpdateKategoriViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object DestinasiUpdateAset : DestinasiNavigasi {
-    override val route = "update_aset"
-    override val titleRes = "Edit Asset"
-    const val ID_ASET = "Id_Aset"
-    val routesWithArg = "$route/{$ID_ASET}"
+object DestinasiUpdateKategori : DestinasiNavigasi {
+    override val route = "update_kategori"
+    override val titleRes = "Edit Kategori"
+    const val ID_KATEGORI = "Id_Kategori"
+    val routesWithArg = "$route/{$ID_KATEGORI}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdateAsetView(
+fun UpdateKategoriView(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     onNavigate: () -> Unit,
-    viewModel: UpdateAsetViewModel = viewModel(factory = PenyediaViewModel .Factory)
+    viewModel: UpdateKategoriViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -40,23 +40,27 @@ fun UpdateAsetView(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiUpdateAset.titleRes,
+                title = DestinasiUpdateKategori.titleRes,
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = onBack,
             )
         }
     ) { padding ->
-        EntryBody(
+        EntryBodyKategori(
             modifier = Modifier.padding(padding),
-            insertUiState = viewModel.updateUiState,
-            onAssetValueChange = viewModel::updateInsertAsetState,
+            insertUiState = viewModel.updateKategoriUiState,
+            onKategoriValueChange = viewModel::updateInsertKategoriState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.updateAset()
-                    delay(600) // Simulate delay after update
-                    withContext(Dispatchers.Main) {
-                        onNavigate() // Navigate back after saving
+                    try {
+                        viewModel.updateKategori()
+                        delay(600) // Simulate delay after update
+                        withContext(Dispatchers.Main) {
+                            onNavigate() // Navigate back after saving
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace() // Log any exception
                     }
                 }
             }

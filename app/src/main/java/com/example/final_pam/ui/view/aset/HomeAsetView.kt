@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.R
 import com.example.final_pam.model.Aset
+import com.example.final_pam.ui.navigation.DestinasiNavigasi
 import com.example.final_pam.ui.viewmodel.aset.HomeAsetUiState
 import com.example.final_pam.ui.viewmodel.aset.HomeAsetViewModel
 

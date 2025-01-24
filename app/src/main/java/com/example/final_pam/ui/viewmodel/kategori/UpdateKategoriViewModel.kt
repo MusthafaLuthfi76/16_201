@@ -7,35 +7,36 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.repository.KategoriRepository
+import com.example.final_pam.ui.view.kategori.DestinasiUpdateKategori
 import kotlinx.coroutines.launch
 
 class UpdateKategoriViewModel(
     savedStateHandle: SavedStateHandle,
     private val kategoriRepository: KategoriRepository
 ): ViewModel() {
-    var updateUiState by mutableStateOf(InsertKategoriUiState())
+    var updateKategoriUiState by mutableStateOf(InsertKategoriUiState())
         private set
 
     // Ambil idKategori dari SavedStateHandle
-    private val _idKategori: Int = checkNotNull(savedStateHandle[DestinasiUpdate.ID_KATEGORI])
+    private val _idKategori: Int = checkNotNull(savedStateHandle[DestinasiUpdateKategori.ID_KATEGORI])
 
     init {
         viewModelScope.launch {
             // Ambil data kategori berdasarkan idKategori
-            updateUiState = kategoriRepository.getKategoriById(_idKategori)
+            updateKategoriUiState = kategoriRepository.getKategoriById(_idKategori)
                 .toUiStateKategori()
         }
     }
 
     fun updateInsertKategoriState(insertUiEvent: InsertKategoriUiEvent) {
-        updateUiState = InsertKategoriUiState(insertUiEvent = insertUiEvent)
+        updateKategoriUiState = InsertKategoriUiState(insertUiEvent = insertUiEvent)
     }
 
     suspend fun updateKategori() {
         viewModelScope.launch {
             try {
                 // Perbarui data kategori berdasarkan idKategori
-                kategoriRepository.updateKategori(_idKategori, updateUiState.insertUiEvent.toKategori())
+                kategoriRepository.updateKategori(_idKategori, updateKategoriUiState.insertUiEvent.toKategori())
             } catch (e: Exception) {
                 e.printStackTrace()
             }

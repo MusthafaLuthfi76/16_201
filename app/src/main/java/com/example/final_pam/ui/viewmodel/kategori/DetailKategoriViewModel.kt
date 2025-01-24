@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.model.Kategori
 import com.example.final_pam.repository.KategoriRepository
+import com.example.final_pam.ui.view.kategori.DestinasiDetailKategori
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
