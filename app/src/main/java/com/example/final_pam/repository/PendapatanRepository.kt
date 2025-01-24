@@ -8,9 +8,9 @@ import okio.IOException
 interface PendapatanRepository {
     suspend fun getPendapatan(): AllPendapatanResponse
     suspend fun insertPendapatan(pendapatan: Pendapatan)
-    suspend fun updatePendapatan(idPendapatan: String, pendapatan: Pendapatan)
-    suspend fun deletePendapatan(idPendapatan: String)
-    suspend fun getPendapatanById(idPendapatan: String): Pendapatan
+    suspend fun updatePendapatan(idPendapatan: Int, pendapatan: Pendapatan) // idPendapatan menjadi Int
+    suspend fun deletePendapatan(idPendapatan: Int) // idPendapatan menjadi Int
+    suspend fun getPendapatanById(idPendapatan: Int): Pendapatan // idPendapatan menjadi Int
 }
 
 class NetworkPendapatanRepository(
@@ -21,11 +21,11 @@ class NetworkPendapatanRepository(
         pendapatanApiService.insertPendapatan(pendapatan)
     }
 
-    override suspend fun updatePendapatan(idPendapatan: String, pendapatan: Pendapatan) {
+    override suspend fun updatePendapatan(idPendapatan: Int, pendapatan: Pendapatan) { // idPendapatan menjadi Int
         pendapatanApiService.updatePendapatan(idPendapatan, pendapatan)
     }
 
-    override suspend fun deletePendapatan(idPendapatan: String) {
+    override suspend fun deletePendapatan(idPendapatan: Int) { // idPendapatan menjadi Int
         try {
             val response = pendapatanApiService.deletePendapatan(idPendapatan)
             if (!response.isSuccessful) {
@@ -42,7 +42,7 @@ class NetworkPendapatanRepository(
 
     override suspend fun getPendapatan(): AllPendapatanResponse = pendapatanApiService.getAllPendapatan()
 
-    override suspend fun getPendapatanById(idPendapatan: String): Pendapatan {
+    override suspend fun getPendapatanById(idPendapatan: Int): Pendapatan { // idPendapatan menjadi Int
         return pendapatanApiService.getPendapatanById(idPendapatan).data
     }
 }

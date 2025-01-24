@@ -8,11 +8,10 @@ import okio.IOException
 interface PengeluaranRepository {
     suspend fun getPengeluaran(): AllPengeluaranResponse
     suspend fun insertPengeluaran(pengeluaran: Pengeluaran)
-    suspend fun updatePengeluaran(idPengeluaran: String, pengeluaran: Pengeluaran)
-    suspend fun deletePengeluaran(idPengeluaran: String)
-    suspend fun getPengeluaranById(idPengeluaran: String): Pengeluaran
+    suspend fun updatePengeluaran(idPengeluaran: Int, pengeluaran: Pengeluaran) // Ubah idPengeluaran menjadi Int
+    suspend fun deletePengeluaran(idPengeluaran: Int) // Ubah idPengeluaran menjadi Int
+    suspend fun getPengeluaranById(idPengeluaran: Int): Pengeluaran // Ubah idPengeluaran menjadi Int
 }
-
 
 class NetworkPengeluaranRepository(
     private val pengeluaranApiService: PengeluaranService
@@ -22,11 +21,11 @@ class NetworkPengeluaranRepository(
         pengeluaranApiService.insertPengeluaran(pengeluaran)
     }
 
-    override suspend fun updatePengeluaran(idPengeluaran: String, pengeluaran: Pengeluaran) {
+    override suspend fun updatePengeluaran(idPengeluaran: Int, pengeluaran: Pengeluaran) { // Ubah idPengeluaran menjadi Int
         pengeluaranApiService.updatePengeluaran(idPengeluaran, pengeluaran)
     }
 
-    override suspend fun deletePengeluaran(idPengeluaran: String) {
+    override suspend fun deletePengeluaran(idPengeluaran: Int) { // Ubah idPengeluaran menjadi Int
         try {
             val response = pengeluaranApiService.deletePengeluaran(idPengeluaran)
             if (!response.isSuccessful) {
@@ -43,7 +42,7 @@ class NetworkPengeluaranRepository(
 
     override suspend fun getPengeluaran(): AllPengeluaranResponse = pengeluaranApiService.getAllPengeluaran()
 
-    override suspend fun getPengeluaranById(idPengeluaran: String): Pengeluaran {
+    override suspend fun getPengeluaranById(idPengeluaran: Int): Pengeluaran { // Ubah idPengeluaran menjadi Int
         return pengeluaranApiService.getPengeluaranById(idPengeluaran).data
     }
 }

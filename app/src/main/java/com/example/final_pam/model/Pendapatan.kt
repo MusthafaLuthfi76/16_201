@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Pendapatan(
     @SerialName("Id_pendapatan")
-    val idPendapatan: String,
+    val idPendapatan: Int,
 
     @SerialName("Id_aset")
-    val idAset: String,
+    val idAset: Int,
 
     @SerialName("Id_kategori")
     val idKategori: String,
@@ -18,7 +18,7 @@ data class Pendapatan(
     val tglTransaksi: String,
 
     @SerialName("total")
-    val total: String,
+    val total: Int,
 
     @SerialName("catatan")
     val catatan: String,

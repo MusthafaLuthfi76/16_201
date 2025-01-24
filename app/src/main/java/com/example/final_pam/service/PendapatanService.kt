@@ -15,14 +15,14 @@ interface PendapatanService {
     suspend fun getAllPendapatan(): AllPendapatanResponse
 
     @GET("{id_pendapatan}")
-    suspend fun getPendapatanById(@Path("id_pendapatan") idPendapatan: String): PendapatanDetailResponse
+    suspend fun getPendapatanById(@Path("id_pendapatan") idPendapatan: Int): PendapatanDetailResponse // idPendapatan menjadi Int
 
     @POST("store")
     suspend fun insertPendapatan(@Body pendapatan: Pendapatan)
 
     @PUT("{id_pendapatan}")
-    suspend fun updatePendapatan(@Path("id_pendapatan") idPendapatan: String, @Body pendapatan: Pendapatan)
+    suspend fun updatePendapatan(@Path("id_pendapatan") idPendapatan: Int, @Body pendapatan: Pendapatan) // idPendapatan menjadi Int
 
     @DELETE("{id_pendapatan}")
-    suspend fun deletePendapatan(@Path("id_pendapatan") idPendapatan: String): retrofit2.Response<Void>
+    suspend fun deletePendapatan(@Path("id_pendapatan") idPendapatan: Int): retrofit2.Response<Void> // idPendapatan menjadi Int
 }

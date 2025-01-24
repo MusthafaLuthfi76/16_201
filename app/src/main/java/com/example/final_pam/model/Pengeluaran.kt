@@ -2,23 +2,24 @@ package com.example.final_pam.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.sql.Date
 
 @Serializable
 data class Pengeluaran(
     @SerialName("Id_pengeluaran")
-    val idPengeluaran: String,
+    val idPengeluaran: Int,
 
     @SerialName("Id_aset")
-    val idAset: String,
+    val idAset: Int,
 
     @SerialName("Id_kategori")
-    val idKategori: String,
+    val idKategori: Int,
 
     @SerialName("Tanggal_transaksi")
     val tglTransaksi: String,
 
     @SerialName("total")
-    val total: String,
+    val total: Int,
 
     @SerialName("catatan")
     val catatan: String,

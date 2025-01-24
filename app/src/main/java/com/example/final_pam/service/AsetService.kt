@@ -15,14 +15,14 @@ interface AsetService {
     suspend fun getAllAset(): AllAsetResponse
 
     @GET("{id_aset}")
-    suspend fun getAsetById(@Path("id_aset") idAset: String): AsetDetailResponse
+    suspend fun getAsetById(@Path("id_aset") idAset: Int): AsetDetailResponse // idAset sebagai Int
 
     @POST("store")
     suspend fun insertAset(@Body aset: Aset)
 
     @PUT("{id_aset}")
-    suspend fun updateAset(@Path("id_aset") idAset: String, @Body aset: Aset)
+    suspend fun updateAset(@Path("id_aset") idAset: Int, @Body aset: Aset) // idAset sebagai Int
 
     @DELETE("{id_aset}")
-    suspend fun deleteAset(@Path("id_aset") idAset: String): retrofit2.Response<Void>
+    suspend fun deleteAset(@Path("id_aset") idAset: Int): retrofit2.Response<Void> // idAset sebagai Int
 }
