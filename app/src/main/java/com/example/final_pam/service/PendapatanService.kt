@@ -11,18 +11,19 @@ interface PendapatanService {
         "Accept: application/json",
         "Content-Type: application/json",
     )
-    @GET(".")
+    @GET("pendapatan/")
     suspend fun getAllPendapatan(): AllPendapatanResponse
 
-    @GET("{id_pendapatan}")
-    suspend fun getPendapatanById(@Path("id_pendapatan") idPendapatan: Int): PendapatanDetailResponse // idPendapatan menjadi Int
+    @GET("pendapatan/{id_pendapatan}")
+    suspend fun getPendapatanById(@Path("id_pendapatan") idPendapatan: String): PendapatanDetailResponse // idPendapatan sebagai String
 
-    @POST("store")
+    @POST("pendapatan/store")
     suspend fun insertPendapatan(@Body pendapatan: Pendapatan)
 
-    @PUT("{id_pendapatan}")
-    suspend fun updatePendapatan(@Path("id_pendapatan") idPendapatan: Int, @Body pendapatan: Pendapatan) // idPendapatan menjadi Int
+    @PUT("pendapatan/{id_pendapatan}")
+    suspend fun updatePendapatan(@Path("id_pendapatan") idPendapatan: String, @Body pendapatan: Pendapatan) // idPendapatan sebagai String
 
-    @DELETE("{id_pendapatan}")
-    suspend fun deletePendapatan(@Path("id_pendapatan") idPendapatan: Int): retrofit2.Response<Void> // idPendapatan menjadi Int
+    @DELETE("pendapatan/{id_pendapatan}")
+    suspend fun deletePendapatan(@Path("id_pendapatan") idPendapatan: String): retrofit2.Response<Void> // idPendapatan sebagai String
 }
+

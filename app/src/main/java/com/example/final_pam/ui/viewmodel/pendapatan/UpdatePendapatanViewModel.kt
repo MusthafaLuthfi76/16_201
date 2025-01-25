@@ -21,7 +21,7 @@ class UpdatePendapatanViewModel(
         private set
 
     // Ambil idPendapatan dari SavedStateHandle
-    private val _idPendapatan: Int = checkNotNull(savedStateHandle[DestinasiUpdate.ID_PENDAPATAN])
+    private val _idPendapatan: Int = checkNotNull(savedStateHandle["DestinasiUpdate.ID_PENDAPATAN"])
 
     init {
         viewModelScope.launch {

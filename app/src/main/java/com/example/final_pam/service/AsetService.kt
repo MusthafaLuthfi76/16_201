@@ -11,18 +11,19 @@ interface AsetService {
         "Accept: application/json",
         "Content-Type: application/json",
     )
-    @GET(".")
+    @GET("aset/")
     suspend fun getAllAset(): AllAsetResponse
 
-    @GET("{id_aset}")
-    suspend fun getAsetById(@Path("id_aset") idAset: Int): AsetDetailResponse // idAset sebagai Int
+    @GET("aset/{id_aset}")
+    suspend fun getAsetById(@Path("id_aset") idAset: String): AsetDetailResponse // idAset sebagai String
 
-    @POST("store")
+    @POST("aset/store")
     suspend fun insertAset(@Body aset: Aset)
 
-    @PUT("{id_aset}")
-    suspend fun updateAset(@Path("id_aset") idAset: Int, @Body aset: Aset) // idAset sebagai Int
+    @PUT("aset/{id_aset}")
+    suspend fun updateAset(@Path("id_aset") idAset: String, @Body aset: Aset) // idAset sebagai String
 
-    @DELETE("{id_aset}")
-    suspend fun deleteAset(@Path("id_aset") idAset: Int): retrofit2.Response<Void> // idAset sebagai Int
+    @DELETE("aset/{id_aset}")
+    suspend fun deleteAset(@Path("id_aset") idAset: String): retrofit2.Response<Void> // idAset sebagai String
 }
+

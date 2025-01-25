@@ -7,13 +7,13 @@ import java.sql.Date
 @Serializable
 data class Pengeluaran(
     @SerialName("Id_pengeluaran")
-    val idPengeluaran: Int,
+    val Id_Pengeluaran: String,
 
     @SerialName("Id_aset")
-    val idAset: Int,
+    val Id_Aset: String,
 
     @SerialName("Id_kategori")
-    val idKategori: Int,
+    val Id_Kategori: String,
 
     @SerialName("Tanggal_transaksi")
     val tglTransaksi: String,

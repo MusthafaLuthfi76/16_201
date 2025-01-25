@@ -11,13 +11,21 @@ import com.example.final_pam.ui.viewmodel.aset.DetailAsetViewModel
 import com.example.final_pam.ui.viewmodel.aset.HomeAsetViewModel
 import com.example.final_pam.ui.viewmodel.aset.InsertAsetViewModel
 
-object PenyediaViewModel{
+object PenyediaViewModel {
     val Factory = viewModelFactory {
+        // HomeAsetViewModel does not need SavedStateHandle
         initializer { HomeAsetViewModel(aplikasiKeuangan().container.asetRepository) }
+
+        // InsertAsetViewModel does not need SavedStateHandle
         initializer { InsertAsetViewModel(aplikasiKeuangan().container.asetRepository) }
-        initializer { DetailAsetViewModel(createSavedStateHandle(),aplikasiKeuangan().container.asetRepository) }
-        initializer { UpdateAsetViewModel(createSavedStateHandle(),aplikasiKeuangan().container.asetRepository) }
+
+        // DetailAsetViewModel needs SavedStateHandle
+        initializer { DetailAsetViewModel(createSavedStateHandle(), aplikasiKeuangan().container.asetRepository) }
+
+        // UpdateAsetViewModel needs SavedStateHandle
+        initializer { UpdateAsetViewModel(createSavedStateHandle(), aplikasiKeuangan().container.asetRepository) }
     }
+
     fun CreationExtras.aplikasiKeuangan(): KeuanganApplication =
-        (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]as KeuanganApplication)
+        (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as KeuanganApplication)
 }

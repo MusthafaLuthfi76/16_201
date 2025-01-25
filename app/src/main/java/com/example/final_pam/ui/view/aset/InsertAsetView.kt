@@ -31,7 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
 import kotlinx.coroutines.launch
 
-object DestinasiEntry: DestinasiNavigasi {
+object DestinasiEntryAset: DestinasiNavigasi {
     override val route = "item_entry"
     override val titleRes = "Insert Asset"
 }
@@ -49,7 +49,7 @@ fun EntryAssetScreen(
         modifier=modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiEntry.titleRes,
+                title = DestinasiEntryAset.titleRes,
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack

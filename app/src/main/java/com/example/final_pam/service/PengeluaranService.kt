@@ -11,18 +11,19 @@ interface PengeluaranService {
         "Accept: application/json",
         "Content-Type: application/json",
     )
-    @GET(".")
+    @GET("pengeluaran/")
     suspend fun getAllPengeluaran(): AllPengeluaranResponse
 
-    @GET("{id_pengeluaran}")
-    suspend fun getPengeluaranById(@Path("id_pengeluaran") idPengeluaran: Int): PengeluaranDetailResponse // Ubah idPengeluaran menjadi Int
+    @GET("pengeluaran/{id_pengeluaran}")
+    suspend fun getPengeluaranById(@Path("id_pengeluaran") idPengeluaran: String): PengeluaranDetailResponse // idPengeluaran sebagai String
 
-    @POST("store")
+    @POST("pengeluaran/store")
     suspend fun insertPengeluaran(@Body pengeluaran: Pengeluaran)
 
-    @PUT("{id_pengeluaran}")
-    suspend fun updatePengeluaran(@Path("id_pengeluaran") idPengeluaran: Int, @Body pengeluaran: Pengeluaran) // Ubah idPengeluaran menjadi Int
+    @PUT("pengeluaran/{id_pengeluaran}")
+    suspend fun updatePengeluaran(@Path("id_pengeluaran") idPengeluaran: String, @Body pengeluaran: Pengeluaran) // idPengeluaran sebagai String
 
-    @DELETE("{id_pengeluaran}")
-    suspend fun deletePengeluaran(@Path("id_pengeluaran") idPengeluaran: Int): retrofit2.Response<Void> // Ubah idPengeluaran menjadi Int
+    @DELETE("pengeluaran/{id_pengeluaran}")
+    suspend fun deletePengeluaran(@Path("id_pengeluaran") idPengeluaran: String): retrofit2.Response<Void> // idPengeluaran sebagai String
 }
+

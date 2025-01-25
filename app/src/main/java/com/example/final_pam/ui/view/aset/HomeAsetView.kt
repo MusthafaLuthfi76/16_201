@@ -179,7 +179,7 @@ fun AsetCard(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_placeholder), // Replace with your placeholder
+                    painter = painterResource(R.drawable.asset), // Replace with your placeholder
                     contentDescription = "Aset Image",
                     modifier = Modifier.size(40.dp)
                 )

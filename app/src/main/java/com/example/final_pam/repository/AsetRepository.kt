@@ -8,9 +8,9 @@ import java.io.IOException
 interface AsetRepository {
     suspend fun getAset(): AllAsetResponse
     suspend fun insertAset(aset: Aset)
-    suspend fun updateAset(idAset: Int, aset: Aset) // idAset sebagai Int
-    suspend fun deleteAset(idAset: Int) // idAset sebagai Int
-    suspend fun getAsetById(idAset: Int): Aset // idAset sebagai Int
+    suspend fun updateAset(idAset: String, aset: Aset) // idAset sebagai String
+    suspend fun deleteAset(idAset: String) // idAset sebagai String
+    suspend fun getAsetById(idAset: String): Aset // idAset sebagai String
 }
 
 class NetworkAsetRepository(
@@ -21,18 +21,15 @@ class NetworkAsetRepository(
         asetApiService.insertAset(aset)
     }
 
-    override suspend fun updateAset(idAset: Int, aset: Aset) {
-        asetApiService.updateAset(idAset, aset) // idAset sebagai Int
+    override suspend fun updateAset(idAset: String, aset: Aset) {
+        asetApiService.updateAset(idAset, aset)
     }
 
-    override suspend fun deleteAset(idAset: Int) { // idAset sebagai Int
+    override suspend fun deleteAset(idAset: String) {
         try {
             val response = asetApiService.deleteAset(idAset)
             if (!response.isSuccessful) {
                 throw IOException("Failed to delete Aset. HTTP Status code: ${response.code()}")
-            } else {
-                response.message()
-                println(response.message())
             }
         } catch (e: Exception) {
             throw e
@@ -41,7 +38,8 @@ class NetworkAsetRepository(
 
     override suspend fun getAset(): AllAsetResponse = asetApiService.getAllAset()
 
-    override suspend fun getAsetById(idAset: Int): Aset { // idAset sebagai Int
+    override suspend fun getAsetById(idAset: String): Aset {
         return asetApiService.getAsetById(idAset).data
     }
 }
+

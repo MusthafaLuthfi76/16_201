@@ -20,10 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Final_PAMTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    KeuanganApp(modifier = Modifier.padding(innerPadding))
                 }
             }
         }

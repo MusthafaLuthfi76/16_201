@@ -8,9 +8,9 @@ import okio.IOException
 interface KategoriRepository {
     suspend fun getKategori(): AllKategoriResponse
     suspend fun insertKategori(kategori: Kategori)
-    suspend fun updateKategori(idKategori: Int, kategori: Kategori) // idKategori menjadi Int
-    suspend fun deleteKategori(idKategori: Int) // idKategori menjadi Int
-    suspend fun getKategoriById(idKategori: Int): Kategori // idKategori menjadi Int
+    suspend fun updateKategori(idKategori: String, kategori: Kategori) // idKategori sebagai String
+    suspend fun deleteKategori(idKategori: String) // idKategori sebagai String
+    suspend fun getKategoriById(idKategori: String): Kategori // idKategori sebagai String
 }
 
 class NetworkKategoriRepository(
@@ -21,19 +21,15 @@ class NetworkKategoriRepository(
         kategoriApiService.insertKategori(kategori)
     }
 
-    override suspend fun updateKategori(idKategori: Int, kategori: Kategori) { // idKategori menjadi Int
+    override suspend fun updateKategori(idKategori: String, kategori: Kategori) {
         kategoriApiService.updateKategori(idKategori, kategori)
     }
 
-    override suspend fun deleteKategori(idKategori: Int) { // idKategori menjadi Int
+    override suspend fun deleteKategori(idKategori: String) {
         try {
             val response = kategoriApiService.deleteKategori(idKategori)
             if (!response.isSuccessful) {
-                throw IOException("Failed to delete Kategori. HTTP Status code: " +
-                        "${response.code()}")
-            } else {
-                response.message()
-                println(response.message())
+                throw IOException("Failed to delete Kategori. HTTP Status code: ${response.code()}")
             }
         } catch (e: Exception) {
             throw e
@@ -42,7 +38,8 @@ class NetworkKategoriRepository(
 
     override suspend fun getKategori(): AllKategoriResponse = kategoriApiService.getAllKategori()
 
-    override suspend fun getKategoriById(idKategori: Int): Kategori { // idKategori menjadi Int
+    override suspend fun getKategoriById(idKategori: String): Kategori {
         return kategoriApiService.getKategoriById(idKategori).data
     }
 }
+

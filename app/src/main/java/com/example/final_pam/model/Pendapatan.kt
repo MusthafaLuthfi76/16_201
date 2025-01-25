@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Pendapatan(
     @SerialName("Id_pendapatan")
-    val idPendapatan: Int,
+    val Id_Pendapatan: String,
 
     @SerialName("Id_aset")
-    val idAset: Int,
+    val Id_Aset: String,
 
     @SerialName("Id_kategori")
-    val idKategori: Int,
+    val Id_Kategori: String,
 
     @SerialName("Tanggal_transaksi")
     val tglTransaksi: String,
