@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.model.Pendapatan
 import com.example.final_pam.repository.PendapatanRepository
+import com.example.final_pam.ui.view.pendapatan.DestinasiUpdatePendapatan
 import com.example.final_pam.ui.viewmodel.InsertPendapatanUiEvent
 import com.example.final_pam.ui.viewmodel.InsertPendapatanUiState
 import com.example.final_pam.ui.viewmodel.toPendapatan
@@ -22,7 +23,7 @@ class UpdatePendapatanViewModel(
     var updateUiState by mutableStateOf(InsertPendapatanUiState())
         private set
 
-    private val _idPendapatan: String = checkNotNull(savedStateHandle["DestinasiUpdatePendapatan.ID_PENDAPATAN"])
+    private val _idPendapatan: String = checkNotNull(savedStateHandle[DestinasiUpdatePendapatan.ID_PENDAPATAN])
 
     init {
         viewModelScope.launch {

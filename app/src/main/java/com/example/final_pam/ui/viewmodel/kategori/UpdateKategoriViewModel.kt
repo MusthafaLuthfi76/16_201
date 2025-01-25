@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.model.Kategori
 import com.example.final_pam.repository.KategoriRepository
+import com.example.final_pam.ui.view.kategori.DestinasiUpdateKategori
 import kotlinx.coroutines.launch
 
 class UpdateKategoriViewModel(
@@ -18,7 +19,7 @@ class UpdateKategoriViewModel(
     var updateUiState by mutableStateOf(InsertKategoriUiState())
         private set
 
-    private val _idKategori: String = checkNotNull(savedStateHandle["DestinasiUpdateKategori.ID_KATEGORI"])
+    private val _idKategori: String = checkNotNull(savedStateHandle[DestinasiUpdateKategori.ID_KATEGORI])
 
     init {
         viewModelScope.launch {

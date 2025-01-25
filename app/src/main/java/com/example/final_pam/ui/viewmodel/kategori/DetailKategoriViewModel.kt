@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.model.Kategori
 import com.example.final_pam.repository.KategoriRepository
+import com.example.final_pam.ui.view.DestinasiDetailAset
+import com.example.final_pam.ui.view.kategori.DestinasiDetailKategori
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -26,7 +28,7 @@ class KategoriDetailViewModel(
     var kategoriDetailState: KategoriDetailUiState by mutableStateOf(KategoriDetailUiState.Loading)
         private set
 
-    private val _idKategori: String = checkNotNull(savedStateHandle["id_kategori"])
+    private val _idKategori: String = checkNotNull(savedStateHandle[DestinasiDetailKategori.ID_KATEGORI])
 
     init {
         getKategoriById()
