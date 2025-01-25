@@ -37,7 +37,8 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                 navigateToItemEntry = { navController.navigate(DestinasiInsertAset.route) },
                 onDetailClick = { idAset ->
                     navController.navigate("${DestinasiDetailAset.route}/$idAset")
-                }
+                },
+                navigateBack = { navController.popBackStack() }
             )
         }
         composable(DestinasiInsertAset.route) {
@@ -75,7 +76,8 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                 navigateToItemEntry = { navController.navigate(DestinasiInsertKategori.route) },
                 onDetailClick = { idKategori ->
                     navController.navigate("${DestinasiDetailKategori.route}/$idKategori")
-                }
+                },
+                navigateBack = { navController.popBackStack() }
             )
         }
         composable(DestinasiInsertKategori.route) {
@@ -113,7 +115,8 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                 navigateToItemEntry = { navController.navigate(DestinasiInsertPendapatan.route) },
                 onDetailClick = { idPendapatan ->
                     navController.navigate("${DestinasiDetailPendapatan.route}/$idPendapatan")
-                }
+                },
+                navigateBack = { navController.popBackStack() }
             )
         }
         composable(DestinasiInsertPendapatan.route) {
@@ -151,7 +154,8 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                 navigateToItemEntry = { navController.navigate(DestinasiInsertPengeluaran.route) },
                 onDetailClick = { idPengeluaran ->
                     navController.navigate("${DestinasiDetailPengeluaran.route}/$idPengeluaran")
-                }
+                },
+                navigateBack = { navController.popBackStack() }
             )
         }
         composable(DestinasiInsertPengeluaran.route) {

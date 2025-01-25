@@ -30,6 +30,16 @@ import com.example.final_pam.ui.viewmodel.pengeluaran.InsertPengeluaranUiEvent
 import com.example.final_pam.ui.viewmodel.pengeluaran.InsertPengeluaranUiState
 import com.example.final_pam.ui.viewmodel.pengeluaran.InsertPengeluaranViewModel
 import kotlinx.coroutines.launch
+import com.example.final_pam.data.Aset
+import com.example.final_pam.ui.customwidget.DynamicSelectTextField
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+
 
 object DestinasiInsertPengeluaran : DestinasiNavigasi {
     override val route = "insertPengeluaran"
@@ -43,8 +53,23 @@ fun InsertPengeluaranView(
     modifier: Modifier = Modifier,
     viewModel: InsertPengeluaranViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
+    // Akses aplikasi keuangan dari context
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val aplikasiKeuangan = context.applicationContext as com.example.final_pam.application.KeuanganApplication
+    val asetRepository = aplikasiKeuangan.container.asetRepository
+
+    // Memuat data aset dari repository
+    LaunchedEffect(Unit) {
+        Aset.loadData(asetRepository)
+    }
+
+    // Observasi data aset
+    val options by Aset.options.collectAsState(initial = emptyList())
+    var selectedAset by remember { mutableStateOf("") }
+
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -65,6 +90,9 @@ fun InsertPengeluaranView(
                     navigateBack()
                 }
             },
+            options = options,
+            selectedAset = selectedAset,
+            onSelectedAsetChange = { selectedAset = it },
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -78,6 +106,9 @@ fun EntryBodyPengeluaran(
     insertUiState: InsertPengeluaranUiState,
     onPengeluaranValueChange: (InsertPengeluaranUiEvent) -> Unit,
     onSaveClick: () -> Unit,
+    options: List<String>,
+    selectedAset: String,
+    onSelectedAsetChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -87,6 +118,9 @@ fun EntryBodyPengeluaran(
         FormInputPengeluaran(
             insertUiEvent = insertUiState.insertUiEvent,
             onValueChange = onPengeluaranValueChange,
+            options = options,
+            selectedAset = selectedAset,
+            onSelectedAsetChange = onSelectedAsetChange,
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -105,6 +139,9 @@ fun FormInputPengeluaran(
     insertUiEvent: InsertPengeluaranUiEvent,
     modifier: Modifier = Modifier,
     onValueChange: (InsertPengeluaranUiEvent) -> Unit = {},
+    options: List<String>,
+    selectedAset: String,
+    onSelectedAsetChange: (String) -> Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -119,13 +156,17 @@ fun FormInputPengeluaran(
             enabled = enabled,
             singleLine = true
         )
-        OutlinedTextField(
-            value = insertUiEvent.idAset,
-            onValueChange = { onValueChange(insertUiEvent.copy(idAset = it)) },
-            label = { Text("ID Aset") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
+        // Dropdown untuk ID Aset
+        DynamicSelectTextField(
+            selectedValue = selectedAset,
+            options = options,
+            label = "ID Aset",
+            onValueChangedEvent = { value ->
+                val idAset = value.substringBefore(":").trim() // Ambil hanya Id_aset
+                onSelectedAsetChange(value)
+                onValueChange(insertUiEvent.copy(idAset = idAset))
+            },
+            modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = insertUiEvent.idKategori,
@@ -173,3 +214,4 @@ fun FormInputPengeluaran(
         )
     }
 }
+

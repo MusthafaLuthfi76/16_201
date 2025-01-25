@@ -62,7 +62,8 @@ fun HomeAsetView(
     navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit = {},
-    viewModel: AsetHomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    viewModel: AsetHomeViewModel = viewModel(factory = PenyediaViewModel.Factory),
+    navigateBack: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -70,11 +71,12 @@ fun HomeAsetView(
         topBar = {
             CostumeTopAppBar(
                 title = "Daftar Aset",
-                canNavigateBack = false,
+                canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
                     viewModel.getAset()
-                }
+                },
+                navigateUp = navigateBack
             )
         },
         floatingActionButton = {

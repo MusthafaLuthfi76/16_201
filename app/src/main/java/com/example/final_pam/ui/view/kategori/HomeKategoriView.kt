@@ -42,7 +42,8 @@ fun HomeKategoriView(
     navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit = {},
-    viewModel: KategoriHomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    viewModel: KategoriHomeViewModel = viewModel(factory = PenyediaViewModel.Factory),
+    navigateBack: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -50,11 +51,12 @@ fun HomeKategoriView(
         topBar = {
             CostumeTopAppBar(
                 title = "Daftar Kategori",
-                canNavigateBack = false,
+                canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
                     viewModel.getKategori()
-                }
+                },
+                navigateUp = navigateBack
             )
         },
         floatingActionButton = {

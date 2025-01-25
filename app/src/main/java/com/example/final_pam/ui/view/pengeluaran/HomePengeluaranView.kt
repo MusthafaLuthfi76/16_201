@@ -41,7 +41,8 @@ fun HomePengeluaranView(
     navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit = {},
-    viewModel: PengeluaranHomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    viewModel: PengeluaranHomeViewModel = viewModel(factory = PenyediaViewModel.Factory),
+    navigateBack: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -49,11 +50,12 @@ fun HomePengeluaranView(
         topBar = {
             CostumeTopAppBar(
                 title = "Daftar Pengeluaran",
-                canNavigateBack = false,
+                canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
                     viewModel.getPengeluaran()
-                }
+                },
+                navigateUp = navigateBack
             )
         },
         floatingActionButton = {
