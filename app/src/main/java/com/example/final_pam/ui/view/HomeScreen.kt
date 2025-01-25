@@ -15,8 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
 import com.example.final_pam.ui.viewmodel.HomeViewModel
+import com.example.final_pam.ui.viewmodel.PenyediaViewModel
 
-object DestinasiHome : DestinasiNavigasi {
+object DestinasiHomeScreen : DestinasiNavigasi {
     override val route = "home"
     override val titleRes = "Home"
 }
@@ -28,7 +29,7 @@ fun HomeScreen(
     onPengeluaranClick: () -> Unit,
     navigateToAset: () -> Unit,
     navigateToKategori: () -> Unit,
-    viewModel: HomeViewModel = viewModel()
+    viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val saldo by remember { viewModel.saldo }
     val totalPengeluaran by remember { viewModel.totalPengeluaran }

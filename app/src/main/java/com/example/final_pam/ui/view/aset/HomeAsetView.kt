@@ -136,7 +136,7 @@ fun AsetHomeStatus(
 fun OnLoading(modifier: Modifier = Modifier){
     Image(
         modifier = modifier.size(200.dp),
-        painter = painterResource(R.drawable.asset),
+        painter = painterResource(R.drawable.loadingg),
         contentDescription = stringResource(R.string.loading)
     )
 }
@@ -150,7 +150,7 @@ fun OnError(retryAction: ()->Unit, modifier: Modifier = Modifier){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Image(
-            painter = painterResource(id = R.drawable.asset), contentDescription = ""
+            painter = painterResource(id = R.drawable.error), contentDescription = ""
         )
         Text(text = stringResource(R.string.loading_failed),modifier = Modifier.padding(16.dp))
         Button(onClick = retryAction) {
