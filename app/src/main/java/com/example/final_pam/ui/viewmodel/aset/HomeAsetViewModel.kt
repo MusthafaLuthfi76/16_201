@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed class HomeAsetUiState {
-    data class Success(val aset: List<Aset>) : HomeAsetUiState()
-    object Error : HomeAsetUiState()
-    object Loading : HomeAsetUiState()
+sealed class AsetHomeUiState {
+    data class Success(val aset: List<Aset>) : AsetHomeUiState()
+    object Error : AsetHomeUiState()
+    object Loading : AsetHomeUiState()
 }
 
-class HomeAsetViewModel(private val asetRepository: AsetRepository) : ViewModel() {
-    var asetUIState: HomeAsetUiState by mutableStateOf(HomeAsetUiState.Loading)
+class AsetHomeViewModel(private val asetRepository: AsetRepository) : ViewModel() {
+    var asetUIState: AsetHomeUiState by mutableStateOf(AsetHomeUiState.Loading)
         private set
 
     init {
@@ -27,26 +27,28 @@ class HomeAsetViewModel(private val asetRepository: AsetRepository) : ViewModel(
 
     fun getAset() {
         viewModelScope.launch {
-            asetUIState = HomeAsetUiState.Loading
+            asetUIState = AsetHomeUiState.Loading
             asetUIState = try {
-                HomeAsetUiState.Success(asetRepository.getAset().data)
+                AsetHomeUiState.Success(asetRepository.getAset().data)
             } catch (e: IOException) {
-                HomeAsetUiState.Error
+                AsetHomeUiState.Error
             } catch (e: HttpException) {
-                HomeAsetUiState.Error
+                AsetHomeUiState.Error
             }
         }
     }
 
-    fun deleteAset(idAset: Int) {
+    fun deleteAset(idAset: String) {
         viewModelScope.launch {
             try {
                 asetRepository.deleteAset(idAset)
+                getAset() // Refresh data setelah penghapusan
             } catch (e: IOException) {
-                HomeAsetUiState.Error
+                asetUIState = AsetHomeUiState.Error
             } catch (e: HttpException) {
-                HomeAsetUiState.Error
+                asetUIState = AsetHomeUiState.Error
             }
         }
     }
 }
+

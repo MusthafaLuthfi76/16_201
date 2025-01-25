@@ -17,7 +17,7 @@ class InsertPengeluaranViewModel(private val pengeluaranRepository: PengeluaranR
         uiState = InsertPengeluaranUiState(insertUiEvent = insertUiEvent)
     }
 
-    suspend fun insertPengeluaran() {
+    fun insertPengeluaran() {
         viewModelScope.launch {
             try {
                 pengeluaranRepository.insertPengeluaran(uiState.insertUiEvent.toPengeluaran())
@@ -33,32 +33,33 @@ data class InsertPengeluaranUiState(
 )
 
 data class InsertPengeluaranUiEvent(
-    val idPengeluaran: Int = 0,
-    val idAset: Int = 0,
-    val idKategori: Int = 0,
+    val idPengeluaran: String = "",
+    val idAset: String = "",
+    val idKategori: String = "",
     val tglTransaksi: String = "",
     val total: Int = 0,
     val catatan: String = ""
 )
 
 fun InsertPengeluaranUiEvent.toPengeluaran(): Pengeluaran = Pengeluaran(
-    idPengeluaran = idPengeluaran,
-    idAset = idAset,
-    idKategori = idKategori,
+    Id_Pengeluaran = idPengeluaran,
+    Id_Aset = idAset,
+    Id_Kategori = idKategori,
     tglTransaksi = tglTransaksi,
     total = total,
     catatan = catatan
 )
 
 fun Pengeluaran.toUiStatePengeluaran(): InsertPengeluaranUiState = InsertPengeluaranUiState(
-    insertUiEvent = toInsertPengeluaranUiEvent()
+    insertUiEvent = toInsertUiEvent()
 )
 
-fun Pengeluaran.toInsertPengeluaranUiEvent(): InsertPengeluaranUiEvent = InsertPengeluaranUiEvent(
-    idPengeluaran = idPengeluaran,
-    idAset = idAset,
-    idKategori = idKategori,
+fun Pengeluaran.toInsertUiEvent(): InsertPengeluaranUiEvent = InsertPengeluaranUiEvent(
+    idPengeluaran = Id_Pengeluaran,
+    idAset = Id_Aset,
+    idKategori = Id_Kategori,
     tglTransaksi = tglTransaksi,
     total = total,
     catatan = catatan
 )
+

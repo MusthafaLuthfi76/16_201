@@ -13,21 +13,24 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed class DetailAsetUiState {
-    data class Success(val aset: Aset) : DetailAsetUiState()
-    object Error : DetailAsetUiState()
-    object Loading : DetailAsetUiState()
+sealed class AsetDetailUiState {
+    data class Success(val aset: Aset) : AsetDetailUiState()
+    object Error : AsetDetailUiState()
+    object Loading : AsetDetailUiState()
 }
 
-class DetailAsetViewModel(
+class AsetDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val asetRepository: AsetRepository
 ) : ViewModel() {
 
-    var asetDetailState: DetailAsetUiState by mutableStateOf(DetailAsetUiState.Loading)
+    var asetDetailState: AsetDetailUiState by mutableStateOf(AsetDetailUiState.Loading)
         private set
 
-    private val _idAset: Int = checkNotNull(savedStateHandle[DestinasiDetailAset.idAset])
+    private val _idAset: String = savedStateHandle[DestinasiDetailAset.ID_ASET]
+        ?: throw IllegalArgumentException("Id_Aset tidak ditemukan atau null")
+
+
 
     init {
         getAsetById()
@@ -35,27 +38,28 @@ class DetailAsetViewModel(
 
     fun getAsetById() {
         viewModelScope.launch {
-            asetDetailState = DetailAsetUiState.Loading
+            asetDetailState = AsetDetailUiState.Loading
             asetDetailState = try {
                 val aset = asetRepository.getAsetById(_idAset)
-                DetailAsetUiState.Success(aset)
+                AsetDetailUiState.Success(aset)
             } catch (e: IOException) {
-                DetailAsetUiState.Error
+                AsetDetailUiState.Error
             } catch (e: HttpException) {
-                DetailAsetUiState.Error
+                AsetDetailUiState.Error
             }
         }
     }
 
-    fun deleteAset(idAset: Int) {
+    fun deleteAset(idAset: String) {
         viewModelScope.launch {
             try {
                 asetRepository.deleteAset(idAset)
             } catch (e: IOException) {
-                DetailAsetUiState.Error
+                asetDetailState = AsetDetailUiState.Error
             } catch (e: HttpException) {
-                DetailAsetUiState.Error
+                asetDetailState = AsetDetailUiState.Error
             }
         }
     }
 }
+

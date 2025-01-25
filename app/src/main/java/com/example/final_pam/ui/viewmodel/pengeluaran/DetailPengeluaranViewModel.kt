@@ -12,21 +12,21 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed class DetailPengeluaranUiState {
-    data class Success(val pengeluaran: Pengeluaran) : DetailPengeluaranUiState()
-    object Error : DetailPengeluaranUiState()
-    object Loading : DetailPengeluaranUiState()
+sealed class PengeluaranDetailUiState {
+    data class Success(val pengeluaran: Pengeluaran) : PengeluaranDetailUiState()
+    object Error : PengeluaranDetailUiState()
+    object Loading : PengeluaranDetailUiState()
 }
 
-class DetailPengeluaranViewModel(
+class PengeluaranDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val pengeluaranRepository: PengeluaranRepository
 ) : ViewModel() {
 
-    var pengeluaranDetailState: DetailPengeluaranUiState by mutableStateOf(DetailPengeluaranUiState.Loading)
+    var pengeluaranDetailState: PengeluaranDetailUiState by mutableStateOf(PengeluaranDetailUiState.Loading)
         private set
 
-    private val _idPengeluaran: Int = checkNotNull(savedStateHandle["DestinasiDetailPengeluaran.ID_PENGELUARAN"])
+    private val _idPengeluaran: String = checkNotNull(savedStateHandle["id_pengeluaran"])
 
     init {
         getPengeluaranById()
@@ -34,27 +34,28 @@ class DetailPengeluaranViewModel(
 
     fun getPengeluaranById() {
         viewModelScope.launch {
-            pengeluaranDetailState = DetailPengeluaranUiState.Loading
+            pengeluaranDetailState = PengeluaranDetailUiState.Loading
             pengeluaranDetailState = try {
                 val pengeluaran = pengeluaranRepository.getPengeluaranById(_idPengeluaran)
-                DetailPengeluaranUiState.Success(pengeluaran)
+                PengeluaranDetailUiState.Success(pengeluaran)
             } catch (e: IOException) {
-                DetailPengeluaranUiState.Error
+                PengeluaranDetailUiState.Error
             } catch (e: HttpException) {
-                DetailPengeluaranUiState.Error
+                PengeluaranDetailUiState.Error
             }
         }
     }
 
-    fun deletePengeluaran(idPengeluaran: Int) {
+    fun deletePengeluaran(idPengeluaran: String) {
         viewModelScope.launch {
             try {
                 pengeluaranRepository.deletePengeluaran(idPengeluaran)
             } catch (e: IOException) {
-                DetailPengeluaranUiState.Error
+                pengeluaranDetailState = PengeluaranDetailUiState.Error
             } catch (e: HttpException) {
-                DetailPengeluaranUiState.Error
+                pengeluaranDetailState = PengeluaranDetailUiState.Error
             }
         }
     }
 }
+

@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed class HomePendapatanUiState {
-    data class Success(val pendapatan: List<Pendapatan>) : HomePendapatanUiState()
-    object Error : HomePendapatanUiState()
-    object Loading : HomePendapatanUiState()
+sealed class PendapatanHomeUiState {
+    data class Success(val pendapatan: List<Pendapatan>) : PendapatanHomeUiState()
+    object Error : PendapatanHomeUiState()
+    object Loading : PendapatanHomeUiState()
 }
 
-class HomePendapatanViewModel(private val pendapatanRepository: PendapatanRepository) : ViewModel() {
-    var pendapatanUIState: HomePendapatanUiState by mutableStateOf(HomePendapatanUiState.Loading)
+class PendapatanHomeViewModel(private val pendapatanRepository: PendapatanRepository) : ViewModel() {
+    var pendapatanUIState: PendapatanHomeUiState by mutableStateOf(PendapatanHomeUiState.Loading)
         private set
 
     init {
@@ -27,26 +27,28 @@ class HomePendapatanViewModel(private val pendapatanRepository: PendapatanReposi
 
     fun getPendapatan() {
         viewModelScope.launch {
-            pendapatanUIState = HomePendapatanUiState.Loading
+            pendapatanUIState = PendapatanHomeUiState.Loading
             pendapatanUIState = try {
-                HomePendapatanUiState.Success(pendapatanRepository.getPendapatan().data)
+                PendapatanHomeUiState.Success(pendapatanRepository.getPendapatan().data)
             } catch (e: IOException) {
-                HomePendapatanUiState.Error
+                PendapatanHomeUiState.Error
             } catch (e: HttpException) {
-                HomePendapatanUiState.Error
+                PendapatanHomeUiState.Error
             }
         }
     }
 
-    fun deletePendapatan(idPendapatan: Int) {
+    fun deletePendapatan(idPendapatan: String) {
         viewModelScope.launch {
             try {
                 pendapatanRepository.deletePendapatan(idPendapatan)
+                getPendapatan() // Refresh data setelah penghapusan
             } catch (e: IOException) {
-                HomePendapatanUiState.Error
+                pendapatanUIState = PendapatanHomeUiState.Error
             } catch (e: HttpException) {
-                HomePendapatanUiState.Error
+                pendapatanUIState = PendapatanHomeUiState.Error
             }
         }
     }
 }
+

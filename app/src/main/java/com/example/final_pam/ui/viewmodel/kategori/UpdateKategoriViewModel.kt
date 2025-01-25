@@ -6,41 +6,41 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.final_pam.model.Kategori
 import com.example.final_pam.repository.KategoriRepository
-import com.example.final_pam.ui.view.kategori.DestinasiUpdateKategori
 import kotlinx.coroutines.launch
 
 class UpdateKategoriViewModel(
     savedStateHandle: SavedStateHandle,
     private val kategoriRepository: KategoriRepository
-): ViewModel() {
-    var updateKategoriUiState by mutableStateOf(InsertKategoriUiState())
+) : ViewModel() {
+
+    var updateUiState by mutableStateOf(InsertKategoriUiState())
         private set
 
-    // Ambil idKategori dari SavedStateHandle
-    private val _idKategori: Int = checkNotNull(savedStateHandle[DestinasiUpdateKategori.ID_KATEGORI])
+    private val _idKategori: String = checkNotNull(savedStateHandle["DestinasiUpdateKategori.ID_KATEGORI"])
 
     init {
         viewModelScope.launch {
-            // Ambil data kategori berdasarkan idKategori
-            updateKategoriUiState = kategoriRepository.getKategoriById(_idKategori)
-                .toUiStateKategori()
+            updateUiState = kategoriRepository.getKategoriById(_idKategori).toUiStateKategori()
         }
     }
 
     fun updateInsertKategoriState(insertUiEvent: InsertKategoriUiEvent) {
-        updateKategoriUiState = InsertKategoriUiState(insertUiEvent = insertUiEvent)
+        updateUiState = InsertKategoriUiState(insertUiEvent = insertUiEvent)
     }
 
-    suspend fun updateKategori() {
+    fun updateKategori() {
         viewModelScope.launch {
             try {
-                // Perbarui data kategori berdasarkan idKategori
-                kategoriRepository.updateKategori(_idKategori, updateKategoriUiState.insertUiEvent.toKategori())
+                kategoriRepository.updateKategori(_idKategori, updateUiState.insertUiEvent.toKategori())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 }
+
+
+
 

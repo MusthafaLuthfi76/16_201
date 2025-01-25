@@ -15,17 +15,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.model.Aset
 import com.example.final_pam.ui.customwidget.CostumeTopAppBar
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
+import com.example.final_pam.ui.view.aset.DestinasiUpdateAset.ID_ASET
 import com.example.final_pam.ui.view.aset.OnError
 import com.example.final_pam.ui.view.aset.OnLoading
 import com.example.final_pam.ui.viewmodel.PenyediaViewModel
-import com.example.final_pam.ui.viewmodel.aset.DetailAsetUiState
-import com.example.final_pam.ui.viewmodel.aset.DetailAsetViewModel
+import com.example.final_pam.ui.viewmodel.aset.AsetDetailUiState
+import com.example.final_pam.ui.viewmodel.aset.AsetDetailViewModel
 
 object DestinasiDetailAset : DestinasiNavigasi {
     override val route = "detailAset"
     override val titleRes = "Detail Aset"
-    const val idAset = "Id_Aset"
-    val routesWithArg = "$route/{$idAset}"
+    const val ID_ASET = "Id_Aset"
+    val routesWithArg = "$route/{$ID_ASET}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,12 +35,12 @@ fun DetailAsetView(
     navigateBack: () -> Unit,
     navigateToItemUpdate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DetailAsetViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    viewModel: AsetDetailViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     Scaffold(
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiDetailAset.titleRes,
+                title = "Detail Aset",
                 canNavigateBack = true,
                 navigateUp = navigateBack,
                 onRefresh = {
@@ -60,13 +61,13 @@ fun DetailAsetView(
             }
         }
     ) { innerPadding ->
-        DetailAsetStatus(
+        AsetDetailStatus(
             modifier = Modifier.padding(innerPadding),
-            detailAsetUiState = viewModel.asetDetailState,
+            detailUiState = viewModel.asetDetailState,
             retryAction = { viewModel.getAsetById() },
             onDeleteClick = {
                 viewModel.deleteAset(viewModel.asetDetailState.let { state ->
-                    if (state is DetailAsetUiState.Success) state.aset.idAset else 0
+                    if (state is AsetDetailUiState.Success) state.aset.Id_Aset else ""
                 })
                 navigateBack()
             }
@@ -75,33 +76,33 @@ fun DetailAsetView(
 }
 
 @Composable
-fun DetailAsetStatus(
+fun AsetDetailStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
-    detailAsetUiState: DetailAsetUiState,
+    detailUiState: AsetDetailUiState,
     onDeleteClick: () -> Unit
 ) {
-    when (detailAsetUiState) {
-        is DetailAsetUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
-        is DetailAsetUiState.Success -> {
-            if (detailAsetUiState.aset.idAset == 0) {
+    when (detailUiState) {
+        is AsetDetailUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
+        is AsetDetailUiState.Success -> {
+            if (detailUiState.aset.Id_Aset.isEmpty()) {
                 Box(
                     modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) { Text("Data tidak ditemukan") }
             } else {
-                ItemDetailAset(
-                    aset = detailAsetUiState.aset,
+                AsetDetailContent(
+                    aset = detailUiState.aset,
                     modifier = modifier.fillMaxWidth(),
                     onDeleteClick = onDeleteClick
                 )
             }
         }
-        is DetailAsetUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
+        is AsetDetailUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
     }
 }
 
 @Composable
-fun ItemDetailAset(
+fun AsetDetailContent(
     modifier: Modifier = Modifier,
     aset: Aset,
     onDeleteClick: () -> Unit
@@ -115,9 +116,9 @@ fun ItemDetailAset(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            ComponentDetailAset(judul = "ID Aset", isinya = aset.idAset.toString())
+            AsetDetailComponent(label = "ID Aset", value = aset.Id_Aset)
             Divider(modifier = Modifier.padding(vertical = 8.dp))
-            ComponentDetailAset(judul = "Nama Aset", isinya = aset.namaAset)
+            AsetDetailComponent(label = "Nama Aset", value = aset.Nama_aset)
 
             Spacer(modifier = Modifier.padding(8.dp))
 
@@ -145,23 +146,23 @@ fun ItemDetailAset(
 }
 
 @Composable
-fun ComponentDetailAset(
+fun AsetDetailComponent(
     modifier: Modifier = Modifier,
-    judul: String,
-    isinya: String
+    label: String,
+    value: String
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = judul,
+            text = label,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            text = isinya,
+            text = value,
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface
@@ -190,3 +191,4 @@ private fun DeleteConfirmationDialog(
         }
     )
 }
+

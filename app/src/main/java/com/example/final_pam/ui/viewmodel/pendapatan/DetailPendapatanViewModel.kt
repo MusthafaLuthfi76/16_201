@@ -12,21 +12,21 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed class DetailPendapatanUiState {
-    data class Success(val pendapatan: Pendapatan) : DetailPendapatanUiState()
-    object Error : DetailPendapatanUiState()
-    object Loading : DetailPendapatanUiState()
+sealed class PendapatanDetailUiState {
+    data class Success(val pendapatan: Pendapatan) : PendapatanDetailUiState()
+    object Error : PendapatanDetailUiState()
+    object Loading : PendapatanDetailUiState()
 }
 
-class DetailPendapatanViewModel(
+class PendapatanDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val pendapatanRepository: PendapatanRepository
 ) : ViewModel() {
 
-    var pendapatanDetailState: DetailPendapatanUiState by mutableStateOf(DetailPendapatanUiState.Loading)
+    var pendapatanDetailState: PendapatanDetailUiState by mutableStateOf(PendapatanDetailUiState.Loading)
         private set
 
-    private val _idPendapatan: Int = checkNotNull(savedStateHandle["DestinasiDetailPendapatan.ID_PENDAPATAN"])
+    private val _idPendapatan: String = checkNotNull(savedStateHandle["id_pendapatan"])
 
     init {
         getPendapatanById()
@@ -34,27 +34,28 @@ class DetailPendapatanViewModel(
 
     fun getPendapatanById() {
         viewModelScope.launch {
-            pendapatanDetailState = DetailPendapatanUiState.Loading
+            pendapatanDetailState = PendapatanDetailUiState.Loading
             pendapatanDetailState = try {
                 val pendapatan = pendapatanRepository.getPendapatanById(_idPendapatan)
-                DetailPendapatanUiState.Success(pendapatan)
+                PendapatanDetailUiState.Success(pendapatan)
             } catch (e: IOException) {
-                DetailPendapatanUiState.Error
+                PendapatanDetailUiState.Error
             } catch (e: HttpException) {
-                DetailPendapatanUiState.Error
+                PendapatanDetailUiState.Error
             }
         }
     }
 
-    fun deletePendapatan(idPendapatan: Int) {
+    fun deletePendapatan(idPendapatan: String) {
         viewModelScope.launch {
             try {
                 pendapatanRepository.deletePendapatan(idPendapatan)
             } catch (e: IOException) {
-                DetailPendapatanUiState.Error
+                pendapatanDetailState = PendapatanDetailUiState.Error
             } catch (e: HttpException) {
-                DetailPendapatanUiState.Error
+                pendapatanDetailState = PendapatanDetailUiState.Error
             }
         }
     }
 }
+

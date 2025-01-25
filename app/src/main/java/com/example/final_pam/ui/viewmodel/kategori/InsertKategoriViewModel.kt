@@ -17,7 +17,7 @@ class InsertKategoriViewModel(private val kategoriRepository: KategoriRepository
         uiState = InsertKategoriUiState(insertUiEvent = insertUiEvent)
     }
 
-    suspend fun insertKategori() {
+    fun insertKategori() {
         viewModelScope.launch {
             try {
                 kategoriRepository.insertKategori(uiState.insertUiEvent.toKategori())
@@ -33,20 +33,21 @@ data class InsertKategoriUiState(
 )
 
 data class InsertKategoriUiEvent(
-    val idKategori: Int = 0,
+    val idKategori: String = "",
     val namaKategori: String = ""
 )
 
 fun InsertKategoriUiEvent.toKategori(): Kategori = Kategori(
-    idKategori = idKategori,
+    Id_kategori = idKategori,
     namaKategori = namaKategori
 )
 
 fun Kategori.toUiStateKategori(): InsertKategoriUiState = InsertKategoriUiState(
-    insertUiEvent = toInsertKategoriUiEvent()
+    insertUiEvent = toInsertUiEvent()
 )
 
-fun Kategori.toInsertKategoriUiEvent(): InsertKategoriUiEvent = InsertKategoriUiEvent(
-    idKategori = idKategori,
+fun Kategori.toInsertUiEvent(): InsertKategoriUiEvent = InsertKategoriUiEvent(
+    idKategori = Id_kategori,
     namaKategori = namaKategori
 )
+

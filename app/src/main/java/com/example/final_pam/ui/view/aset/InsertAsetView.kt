@@ -31,34 +31,34 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
 import kotlinx.coroutines.launch
 
-object DestinasiEntryAset: DestinasiNavigasi {
-    override val route = "item_entry"
-    override val titleRes = "Insert Asset"
+object DestinasiInsertAset : DestinasiNavigasi {
+    override val route = "insertAset"
+    override val titleRes = "Insert Aset"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryAssetScreen(
-    navigateBack: ()-> Unit,
-    modifier: Modifier=Modifier,
-    viewModel: InsertAsetViewModel= viewModel(factory = PenyediaViewModel.Factory)
+fun InsertAsetView(
+    navigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: InsertAsetViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    Scaffold (
-        modifier=modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
-                title = DestinasiEntryAset.titleRes,
+                title = DestinasiInsertAset.titleRes,
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack
             )
         }
-    ){ innerPadding ->
-        EntryBody(
+    ) { innerPadding ->
+        EntryBodyAset(
             insertUiState = viewModel.uiState,
-            onAssetValueChange = viewModel::updateInsertAsetState,
+            onAsetValueChange = viewModel::updateInsertAsetState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.insertAset()
@@ -74,19 +74,19 @@ fun EntryAssetScreen(
 }
 
 @Composable
-fun EntryBody(
+fun EntryBodyAset(
     insertUiState: InsertAsetUiState,
-    onAssetValueChange: (InsertAsetUiEvent)->Unit,
-    onSaveClick: ()->Unit,
+    onAsetValueChange: (InsertAsetUiEvent) -> Unit,
+    onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column (
+    Column(
         verticalArrangement = Arrangement.spacedBy(18.dp),
         modifier = modifier.padding(12.dp)
     ) {
-        FormInput(
+        FormInputAset(
             insertUiEvent = insertUiState.insertUiEvent,
-            onValueChange = onAssetValueChange,
+            onValueChange = onAsetValueChange,
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -101,23 +101,20 @@ fun EntryBody(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormInput(
+fun FormInputAset(
     insertUiEvent: InsertAsetUiEvent,
     modifier: Modifier = Modifier,
-    onValueChange: (InsertAsetUiEvent)->Unit={},
+    onValueChange: (InsertAsetUiEvent) -> Unit = {},
     enabled: Boolean = true
 ) {
-    Column (
+    Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         OutlinedTextField(
-            value = insertUiEvent.idAset.toString(),  // Convert Int to String for display
-            onValueChange = { newValue ->
-                val intValue = newValue.toIntOrNull() ?: 0  // Convert input String to Int
-                onValueChange(insertUiEvent.copy(idAset = intValue))
-            },
-            label = { Text("Kode Asset") },
+            value = insertUiEvent.idAset,
+            onValueChange = { onValueChange(insertUiEvent.copy(idAset = it)) },
+            label = { Text("ID Aset") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
@@ -125,22 +122,10 @@ fun FormInput(
         OutlinedTextField(
             value = insertUiEvent.namaAset,
             onValueChange = { onValueChange(insertUiEvent.copy(namaAset = it)) },
-            label = { Text("Nama Asset") },
+            label = { Text("Nama Aset") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
-        )
-        OutlinedTextField(
-            value = insertUiEvent.nilaiAset.toString(),  // Convert Double to String for display
-            onValueChange = { newValue ->
-                val doubleValue = newValue.toDoubleOrNull() ?: 0.0  // Convert input String to Double
-                onValueChange(insertUiEvent.copy(nilaiAset = doubleValue))
-            },
-            label = { Text("Nilai Aset") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         if (enabled) {
             Text(
@@ -154,4 +139,5 @@ fun FormInput(
         )
     }
 }
+
 

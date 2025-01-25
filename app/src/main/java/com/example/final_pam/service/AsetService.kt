@@ -26,4 +26,3 @@ interface AsetService {
     @DELETE("aset/{id_aset}")
     suspend fun deleteAset(@Path("id_aset") idAset: String): retrofit2.Response<Void> // idAset sebagai String
 }
-

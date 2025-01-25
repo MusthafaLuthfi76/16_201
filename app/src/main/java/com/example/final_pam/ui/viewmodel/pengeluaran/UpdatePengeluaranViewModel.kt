@@ -6,24 +6,23 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.final_pam.model.Pengeluaran
 import com.example.final_pam.repository.PengeluaranRepository
 import kotlinx.coroutines.launch
 
 class UpdatePengeluaranViewModel(
     savedStateHandle: SavedStateHandle,
     private val pengeluaranRepository: PengeluaranRepository
-): ViewModel() {
+) : ViewModel() {
+
     var updateUiState by mutableStateOf(InsertPengeluaranUiState())
         private set
 
-    // Ambil idPengeluaran dari SavedStateHandle
-    private val _idPengeluaran: Int = checkNotNull(savedStateHandle["DestinasiUpdate.ID_PENGELUARAN"])
+    private val _idPengeluaran: String = checkNotNull(savedStateHandle["Pengeluaran.ID_PENGELUARAN"])
 
     init {
         viewModelScope.launch {
-            // Ambil data pengeluaran berdasarkan idPengeluaran
-            updateUiState = pengeluaranRepository.getPengeluaranById(_idPengeluaran)
-                .toUiStatePengeluaran()
+            updateUiState = pengeluaranRepository.getPengeluaranById(_idPengeluaran).toUiStatePengeluaran()
         }
     }
 
@@ -31,10 +30,9 @@ class UpdatePengeluaranViewModel(
         updateUiState = InsertPengeluaranUiState(insertUiEvent = insertUiEvent)
     }
 
-    suspend fun updatePengeluaran() {
+    fun updatePengeluaran() {
         viewModelScope.launch {
             try {
-                // Perbarui data pengeluaran berdasarkan idPengeluaran
                 pengeluaranRepository.updatePengeluaran(_idPengeluaran, updateUiState.insertUiEvent.toPengeluaran())
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -42,4 +40,3 @@ class UpdatePengeluaranViewModel(
         }
     }
 }
-

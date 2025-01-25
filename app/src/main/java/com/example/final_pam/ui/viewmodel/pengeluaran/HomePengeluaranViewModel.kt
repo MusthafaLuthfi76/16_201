@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed class HomePengeluaranUiState {
-    data class Success(val pengeluaran: List<Pengeluaran>) : HomePengeluaranUiState()
-    object Error : HomePengeluaranUiState()
-    object Loading : HomePengeluaranUiState()
+sealed class PengeluaranHomeUiState {
+    data class Success(val pengeluaran: List<Pengeluaran>) : PengeluaranHomeUiState()
+    object Error : PengeluaranHomeUiState()
+    object Loading : PengeluaranHomeUiState()
 }
 
-class HomePengeluaranViewModel(private val pengeluaranRepository: PengeluaranRepository) : ViewModel() {
-    var pengeluaranUIState: HomePengeluaranUiState by mutableStateOf(HomePengeluaranUiState.Loading)
+class PengeluaranHomeViewModel(private val pengeluaranRepository: PengeluaranRepository) : ViewModel() {
+    var pengeluaranUIState: PengeluaranHomeUiState by mutableStateOf(PengeluaranHomeUiState.Loading)
         private set
 
     init {
@@ -27,26 +27,28 @@ class HomePengeluaranViewModel(private val pengeluaranRepository: PengeluaranRep
 
     fun getPengeluaran() {
         viewModelScope.launch {
-            pengeluaranUIState = HomePengeluaranUiState.Loading
+            pengeluaranUIState = PengeluaranHomeUiState.Loading
             pengeluaranUIState = try {
-                HomePengeluaranUiState.Success(pengeluaranRepository.getPengeluaran().data)
+                PengeluaranHomeUiState.Success(pengeluaranRepository.getPengeluaran().data)
             } catch (e: IOException) {
-                HomePengeluaranUiState.Error
+                PengeluaranHomeUiState.Error
             } catch (e: HttpException) {
-                HomePengeluaranUiState.Error
+                PengeluaranHomeUiState.Error
             }
         }
     }
 
-    fun deletePengeluaran(idPengeluaran: Int) {
+    fun deletePengeluaran(idPengeluaran: String) {
         viewModelScope.launch {
             try {
                 pengeluaranRepository.deletePengeluaran(idPengeluaran)
+                getPengeluaran() // Refresh data setelah penghapusan
             } catch (e: IOException) {
-                HomePengeluaranUiState.Error
+                pengeluaranUIState = PengeluaranHomeUiState.Error
             } catch (e: HttpException) {
-                HomePengeluaranUiState.Error
+                pengeluaranUIState = PengeluaranHomeUiState.Error
             }
         }
     }
 }
+

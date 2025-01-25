@@ -36,15 +36,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.R
 import com.example.final_pam.model.Aset
+import com.example.final_pam.ui.customwidget.CostumeTopAppBar
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
-import com.example.final_pam.ui.viewmodel.aset.HomeAsetUiState
-import com.example.final_pam.ui.viewmodel.aset.HomeAsetViewModel
+import com.example.final_pam.ui.viewmodel.PenyediaViewModel
+import com.example.final_pam.ui.viewmodel.aset.AsetHomeUiState
+import com.example.final_pam.ui.viewmodel.aset.AsetHomeViewModel
+
 
 object DestinasiHomeAset : DestinasiNavigasi{
     override val route = "homeAset"
@@ -56,34 +61,39 @@ object DestinasiHomeAset : DestinasiNavigasi{
 fun HomeAsetView(
     navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (Int) -> Unit = {},
-    viewModel: HomeAsetViewModel = viewModel()
+    onDetailClick: (String) -> Unit = {},
+    viewModel: AsetHomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            androidx.compose.material3.TopAppBar(
-                title = { Text("Aset") },
-                scrollBehavior = scrollBehavior
+            CostumeTopAppBar(
+                title = "Daftar Aset",
+                canNavigateBack = false,
+                scrollBehavior = scrollBehavior,
+                onRefresh = {
+                    viewModel.getAset()
+                }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = navigateToItemEntry,
+                shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(18.dp)
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Aset")
             }
         }
     ) { innerPadding ->
-        AsetStatus(
-            asetUiState = viewModel.asetUIState,
+        AsetHomeStatus(
+            homeUiState = viewModel.asetUIState,
             retryAction = { viewModel.getAset() },
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
             onDeleteClick = {
-                viewModel.deleteAset(it.idAset)
+                viewModel.deleteAset(it.Id_Aset)
                 viewModel.getAset()
             }
         )
@@ -91,34 +101,61 @@ fun HomeAsetView(
 }
 
 @Composable
-fun AsetStatus(
-    asetUiState: HomeAsetUiState,
+fun AsetHomeStatus(
+    homeUiState: AsetHomeUiState,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Aset) -> Unit = {},
-    onDetailClick: (Int) -> Unit
+    onDetailClick: (String) -> Unit
 ) {
-    when (asetUiState) {
-        is HomeAsetUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
-        is HomeAsetUiState.Success -> {
-            if (asetUiState.aset.isEmpty()) {
+    when (homeUiState) {
+        is AsetHomeUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
+        is AsetHomeUiState.Success ->
+            if (homeUiState.aset.isEmpty()) {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "Tidak ada data Aset")
+                    Text(text = "Tidak ada data aset")
                 }
             } else {
                 AsetLayout(
-                    aset = asetUiState.aset,
+                    aset = homeUiState.aset,
                     modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
-                        onDetailClick(it.idAset)
+                        onDetailClick(it.Id_Aset)
                     },
                     onDeleteClick = {
                         onDeleteClick(it)
                     }
                 )
             }
+        is AsetHomeUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
+    }
+}
+
+//Homescreen menampilkan loading message
+@Composable
+fun OnLoading(modifier: Modifier = Modifier){
+    Image(
+        modifier = modifier.size(200.dp),
+        painter = painterResource(R.drawable.asset),
+        contentDescription = stringResource(R.string.loading)
+    )
+}
+
+//Homescreen menampilkan error message
+@Composable
+fun OnError(retryAction: ()->Unit, modifier: Modifier = Modifier){
+    Column (
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Image(
+            painter = painterResource(id = R.drawable.asset), contentDescription = ""
+        )
+        Text(text = stringResource(R.string.loading_failed),modifier = Modifier.padding(16.dp))
+        Button(onClick = retryAction) {
+            Text(stringResource(R.string.retry))
         }
-        is HomeAsetUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
     }
 }
 
@@ -160,9 +197,7 @@ fun AsetCard(
             .padding(8.dp)
             .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
@@ -171,46 +206,28 @@ fun AsetCard(
                 .background(Color(0xFFE0F7FA))
                 .padding(16.dp)
         ) {
-            // Placeholder for Aset image
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .background(Color(0xFF0097A7), shape = RoundedCornerShape(8.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.asset), // Replace with your placeholder
-                    contentDescription = "Aset Image",
-                    modifier = Modifier.size(40.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Aset Information
+            // Informasi aset
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = aset.namaAset,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
+                    text = aset.Nama_aset,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color(0xFF00796B)
                 )
                 Text(
-                    text = "ID Aset: ${aset.idAset}",
+                    text = "ID Aset: ${aset.Id_Aset}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF004D40)
                 )
             }
 
-            // Delete button
+            // Tombol delete
             IconButton(onClick = { onDeleteClick(aset) }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Aset",
+                    contentDescription = "Delete",
                     tint = Color.Red
                 )
             }
@@ -218,28 +235,3 @@ fun AsetCard(
     }
 }
 
-// Composable to show loading status
-@Composable
-fun OnLoading(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Loading...")
-    }
-}
-
-// Composable to show error status
-@Composable
-fun OnError(retryAction: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Failed to load data.")
-        Button(onClick = retryAction) {
-            Text("Retry")
-        }
-    }
-}

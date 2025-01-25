@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.ui.customwidget.CostumeTopAppBar
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
 import com.example.final_pam.ui.viewmodel.PenyediaViewModel
+import com.example.final_pam.ui.viewmodel.UpdateAsetViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,13 +26,14 @@ object DestinasiUpdateAset : DestinasiNavigasi {
     val routesWithArg = "$route/{$ID_ASET}"
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateAsetView(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     onNavigate: () -> Unit,
-    viewModel: UpdateAsetViewModel = viewModel(factory = PenyediaViewModel .Factory)
+    viewModel: UpdateAsetViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -47,19 +49,20 @@ fun UpdateAsetView(
             )
         }
     ) { padding ->
-        EntryBody(
+        EntryBodyAset(
             modifier = Modifier.padding(padding),
             insertUiState = viewModel.updateUiState,
-            onAssetValueChange = viewModel::updateInsertAsetState,
+            onAsetValueChange = viewModel::updateInsertAsetState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.updateAset()
-                    delay(600) // Simulate delay after update
+                    delay(600)
                     withContext(Dispatchers.Main) {
-                        onNavigate() // Navigate back after saving
+                        onNavigate()
                     }
                 }
             }
         )
     }
 }
+

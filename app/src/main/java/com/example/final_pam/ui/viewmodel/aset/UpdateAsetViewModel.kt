@@ -1,9 +1,12 @@
+package com.example.final_pam.ui.viewmodel
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.final_pam.model.Aset
 import com.example.final_pam.repository.AsetRepository
 import com.example.final_pam.ui.view.aset.DestinasiUpdateAset
 import com.example.final_pam.ui.viewmodel.aset.InsertAsetUiEvent
@@ -12,21 +15,19 @@ import com.example.final_pam.ui.viewmodel.aset.toAset
 import com.example.final_pam.ui.viewmodel.aset.toUiStateAset
 import kotlinx.coroutines.launch
 
-class UpdateAsetViewModel (
+class UpdateAsetViewModel(
     savedStateHandle: SavedStateHandle,
     private val asetRepository: AsetRepository
-): ViewModel() {
+) : ViewModel() {
+
     var updateUiState by mutableStateOf(InsertAsetUiState())
         private set
 
-    // Ambil idAset dari SavedStateHandle, ganti NIM dengan idAset
-    private val _idAset: Int = checkNotNull(savedStateHandle[DestinasiUpdateAset.ID_ASET])
+    private val _idAset: String = checkNotNull(savedStateHandle[DestinasiUpdateAset.ID_ASET])
 
     init {
         viewModelScope.launch {
-            // Ambil data aset berdasarkan idAset
-            updateUiState = asetRepository.getAsetById(_idAset)
-                .toUiStateAset()
+            updateUiState = asetRepository.getAsetById(_idAset).toUiStateAset()
         }
     }
 
@@ -37,7 +38,6 @@ class UpdateAsetViewModel (
     suspend fun updateAset() {
         viewModelScope.launch {
             try {
-                // Perbarui data aset berdasarkan idAset
                 asetRepository.updateAset(_idAset, updateUiState.insertUiEvent.toAset())
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -45,3 +45,4 @@ class UpdateAsetViewModel (
         }
     }
 }
+

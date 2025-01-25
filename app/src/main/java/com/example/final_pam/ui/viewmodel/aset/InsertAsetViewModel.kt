@@ -17,7 +17,7 @@ class InsertAsetViewModel(private val asetRepository: AsetRepository) : ViewMode
         uiState = InsertAsetUiState(insertUiEvent = insertUiEvent)
     }
 
-    suspend fun insertAset() {
+    fun insertAset() {
         viewModelScope.launch {
             try {
                 asetRepository.insertAset(uiState.insertUiEvent.toAset())
@@ -33,21 +33,20 @@ data class InsertAsetUiState(
 )
 
 data class InsertAsetUiEvent(
-    val idAset: Int = 0,
-    val namaAset: String = "",
-    val nilaiAset: Double = 0.0
+    val idAset: String = "",
+    val namaAset: String = ""
 )
 
 fun InsertAsetUiEvent.toAset(): Aset = Aset(
-    idAset = idAset,
-    namaAset = namaAset,
+    Id_Aset = idAset,
+    Nama_aset = namaAset
 )
 
 fun Aset.toUiStateAset(): InsertAsetUiState = InsertAsetUiState(
-    insertUiEvent = toInsertAsetUiEvent()
+    insertUiEvent = toInsertUiEvent()
 )
 
-fun Aset.toInsertAsetUiEvent(): InsertAsetUiEvent = InsertAsetUiEvent(
-    idAset = idAset,
-    namaAset = namaAset,
+fun Aset.toInsertUiEvent(): InsertAsetUiEvent = InsertAsetUiEvent(
+    idAset = Id_Aset,
+    namaAset = Nama_aset
 )

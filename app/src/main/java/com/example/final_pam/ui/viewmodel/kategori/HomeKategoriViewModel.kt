@@ -11,14 +11,14 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed class HomeKategoriUiState {
-    data class Success(val kategori: List<Kategori>) : HomeKategoriUiState()
-    object Error : HomeKategoriUiState()
-    object Loading : HomeKategoriUiState()
+sealed class KategoriHomeUiState {
+    data class Success(val kategori: List<Kategori>) : KategoriHomeUiState()
+    object Error : KategoriHomeUiState()
+    object Loading : KategoriHomeUiState()
 }
 
-class HomeKategoriViewModel(private val kategoriRepository: KategoriRepository) : ViewModel() {
-    var kategoriUIState: HomeKategoriUiState by mutableStateOf(HomeKategoriUiState.Loading)
+class KategoriHomeViewModel(private val kategoriRepository: KategoriRepository) : ViewModel() {
+    var kategoriUIState: KategoriHomeUiState by mutableStateOf(KategoriHomeUiState.Loading)
         private set
 
     init {
@@ -27,26 +27,28 @@ class HomeKategoriViewModel(private val kategoriRepository: KategoriRepository) 
 
     fun getKategori() {
         viewModelScope.launch {
-            kategoriUIState = HomeKategoriUiState.Loading
+            kategoriUIState = KategoriHomeUiState.Loading
             kategoriUIState = try {
-                HomeKategoriUiState.Success(kategoriRepository.getKategori().data)
+                KategoriHomeUiState.Success(kategoriRepository.getKategori().data)
             } catch (e: IOException) {
-                HomeKategoriUiState.Error
+                KategoriHomeUiState.Error
             } catch (e: HttpException) {
-                HomeKategoriUiState.Error
+                KategoriHomeUiState.Error
             }
         }
     }
 
-    fun deleteKategori(idKategori: Int) {
+    fun deleteKategori(idKategori: String) {
         viewModelScope.launch {
             try {
                 kategoriRepository.deleteKategori(idKategori)
+                getKategori() // Refresh data setelah penghapusan
             } catch (e: IOException) {
-                HomeKategoriUiState.Error
+                kategoriUIState = KategoriHomeUiState.Error
             } catch (e: HttpException) {
-                HomeKategoriUiState.Error
+                kategoriUIState = KategoriHomeUiState.Error
             }
         }
     }
 }
+

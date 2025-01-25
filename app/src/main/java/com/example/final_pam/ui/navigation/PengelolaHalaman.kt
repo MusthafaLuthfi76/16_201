@@ -10,11 +10,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.final_pam.ui.view.DestinasiDetailAset
 import com.example.final_pam.ui.view.DetailAsetView
-import com.example.final_pam.ui.view.aset.DestinasiEntryAset
 import com.example.final_pam.ui.view.aset.DestinasiHomeAset
+import com.example.final_pam.ui.view.aset.DestinasiInsertAset
 import com.example.final_pam.ui.view.aset.DestinasiUpdateAset
-import com.example.final_pam.ui.view.aset.EntryAssetScreen
 import com.example.final_pam.ui.view.aset.HomeAsetView
+import com.example.final_pam.ui.view.aset.InsertAsetView
 import com.example.final_pam.ui.view.aset.UpdateAsetView
 
 @Composable
@@ -26,14 +26,14 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
     ) {
         composable(DestinasiHomeAset.route) {
             HomeAsetView(
-                navigateToItemEntry = { navController.navigate(DestinasiEntryAset.route) },
+                navigateToItemEntry = { navController.navigate(DestinasiInsertAset.route) },
                 onDetailClick = { idAset ->
                     navController.navigate("${DestinasiDetailAset.route}/$idAset")
                 }
             )
         }
-        composable(DestinasiEntryAset.route) {
-            EntryAssetScreen(navigateBack = {
+        composable(DestinasiInsertAset.route) {
+            InsertAsetView(navigateBack = {
                 navController.navigate(DestinasiHomeAset.route) {
                     popUpTo(DestinasiHomeAset.route) {
                         inclusive = true
@@ -43,14 +43,16 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
         composable(
             DestinasiDetailAset.routesWithArg,
-            arguments = listOf(navArgument(DestinasiDetailAset.idAset) {
+            arguments = listOf(navArgument(DestinasiDetailAset.ID_ASET) {
                 type = NavType.StringType
             })
         ) {
-            val idAset = it.arguments?.getString(DestinasiDetailAset.idAset)
-            idAset?.let { idAset ->
+            val idAset = it.arguments?.getString(DestinasiDetailAset.ID_ASET)
+            idAset?.let { id ->
                 DetailAsetView(
-                    navigateToItemUpdate = { navController.navigate("${DestinasiUpdateAset.route}/$idAset") },
+                    navigateToItemUpdate = {
+                        navController.navigate("${DestinasiUpdateAset.route}/$id")
+                    },
                     navigateBack = {
                         navController.navigate(DestinasiHomeAset.route) {
                             popUpTo(DestinasiHomeAset.route) { inclusive = true }
@@ -75,3 +77,4 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
     }
 }
+
