@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.example.final_pam.data.KategoriDD
 
 
 object DestinasiInsertPengeluaran : DestinasiNavigasi {
@@ -57,15 +58,19 @@ fun InsertPengeluaranView(
     val context = androidx.compose.ui.platform.LocalContext.current
     val aplikasiKeuangan = context.applicationContext as com.example.final_pam.application.KeuanganApplication
     val asetRepository = aplikasiKeuangan.container.asetRepository
+    val kategoriRepository = aplikasiKeuangan.container.kategoriRepository
 
     // Memuat data aset dari repository
     LaunchedEffect(Unit) {
         Aset.loadData(asetRepository)
+        KategoriDD.loadData(kategoriRepository)
     }
 
     // Observasi data aset
     val options by Aset.options.collectAsState(initial = emptyList())
+    val kategoriOptions by KategoriDD.options.collectAsState(initial = emptyList())
     var selectedAset by remember { mutableStateOf("") }
+    var selectedKategori by remember { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -93,6 +98,9 @@ fun InsertPengeluaranView(
             options = options,
             selectedAset = selectedAset,
             onSelectedAsetChange = { selectedAset = it },
+            kategoriOptions = kategoriOptions,
+            selectedKategori = selectedKategori,
+            onSelectedKategoriChange = { selectedKategori = it },
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -109,6 +117,9 @@ fun EntryBodyPengeluaran(
     options: List<String>,
     selectedAset: String,
     onSelectedAsetChange: (String) -> Unit,
+    kategoriOptions: List<String>,
+    selectedKategori: String,
+    onSelectedKategoriChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -121,6 +132,9 @@ fun EntryBodyPengeluaran(
             options = options,
             selectedAset = selectedAset,
             onSelectedAsetChange = onSelectedAsetChange,
+            kategoriOptions = kategoriOptions,
+            selectedKategori = selectedKategori,
+            onSelectedKategoriChange = onSelectedKategoriChange,
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -142,6 +156,9 @@ fun FormInputPengeluaran(
     options: List<String>,
     selectedAset: String,
     onSelectedAsetChange: (String) -> Unit,
+    kategoriOptions: List<String>,
+    selectedKategori: String,
+    onSelectedKategoriChange: (String) -> Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -168,13 +185,17 @@ fun FormInputPengeluaran(
             },
             modifier = Modifier.fillMaxWidth()
         )
-        OutlinedTextField(
-            value = insertUiEvent.idKategori,
-            onValueChange = { onValueChange(insertUiEvent.copy(idKategori = it)) },
-            label = { Text("ID Kategori") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
+        // Dropdown untuk ID Kategori
+        DynamicSelectTextField(
+            selectedValue = selectedKategori,
+            options = kategoriOptions,
+            label = "ID Kategori",
+            onValueChangedEvent = { value ->
+                val idKategori = value.substringBefore(":").trim() // Ambil hanya Id_kategori
+                onSelectedKategoriChange(value)
+                onValueChange(insertUiEvent.copy(idKategori = idKategori))
+            },
+            modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = insertUiEvent.tglTransaksi,
