@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.data.Aset
+import com.example.final_pam.data.KategoriDD
 import com.example.final_pam.ui.customwidget.CostumeTopAppBar
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
 import com.example.final_pam.ui.viewmodel.PenyediaViewModel
@@ -40,19 +41,23 @@ fun UpdatePengeluaranView(
     onNavigate: () -> Unit,
     viewModel: UpdatePengeluaranViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    // Akses aplikasi keuangan untuk memuat data aset
+    // Akses aplikasi keuangan dari context
     val context = androidx.compose.ui.platform.LocalContext.current
     val aplikasiKeuangan = context.applicationContext as com.example.final_pam.application.KeuanganApplication
     val asetRepository = aplikasiKeuangan.container.asetRepository
+    val kategoriRepository = aplikasiKeuangan.container.kategoriRepository
 
-    // Memuat data aset dari repository
+    // Memuat data aset dan kategori dari repository
     LaunchedEffect(Unit) {
         Aset.loadData(asetRepository)
+        KategoriDD.loadData(kategoriRepository)
     }
 
-    // Observasi data aset
+    // Observasi data aset dan kategori
     val options by Aset.options.collectAsState(initial = emptyList())
+    val kategoriOptions by KategoriDD.options.collectAsState(initial = emptyList())
     var selectedAset by remember { mutableStateOf("") }
+    var selectedKategori by remember { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -83,7 +88,10 @@ fun UpdatePengeluaranView(
             },
             options = options, // Data aset untuk dropdown
             selectedAset = selectedAset, // Aset yang dipilih
-            onSelectedAsetChange = { selectedAset = it } // Callback ketika aset dipilih
+            onSelectedAsetChange = { selectedAset = it }, // Callback ketika aset dipilih
+            kategoriOptions = kategoriOptions, // Data kategori untuk dropdown
+            selectedKategori = selectedKategori, // Kategori yang dipilih
+            onSelectedKategoriChange = { selectedKategori = it } // Callback ketika kategori dipilih
         )
     }
 }
