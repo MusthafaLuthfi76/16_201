@@ -3,19 +3,22 @@ package com.example.final_pam.repository
 import com.example.final_pam.model.AllPengeluaranResponse
 import com.example.final_pam.model.Pengeluaran
 import com.example.final_pam.service.PengeluaranService
-import okio.IOException
+import java.io.IOException
 
 interface PengeluaranRepository {
     suspend fun getPengeluaran(): AllPengeluaranResponse
     suspend fun insertPengeluaran(pengeluaran: Pengeluaran)
-    suspend fun updatePengeluaran(idPengeluaran: String, pengeluaran: Pengeluaran) // idPengeluaran sebagai String
-    suspend fun deletePengeluaran(idPengeluaran: String) // idPengeluaran sebagai String
-    suspend fun getPengeluaranById(idPengeluaran: String): Pengeluaran // idPengeluaran sebagai String
+    suspend fun updatePengeluaran(idPengeluaran: String, pengeluaran: Pengeluaran)
+    suspend fun deletePengeluaran(idPengeluaran: String)
+    suspend fun getPengeluaranById(idPengeluaran: String): Pengeluaran
 }
 
 class NetworkPengeluaranRepository(
     private val pengeluaranApiService: PengeluaranService
 ) : PengeluaranRepository {
+
+    override suspend fun getPengeluaran(): AllPengeluaranResponse =
+        pengeluaranApiService.getAllPengeluaran()
 
     override suspend fun insertPengeluaran(pengeluaran: Pengeluaran) {
         pengeluaranApiService.insertPengeluaran(pengeluaran)
@@ -36,10 +39,7 @@ class NetworkPengeluaranRepository(
         }
     }
 
-    override suspend fun getPengeluaran(): AllPengeluaranResponse = pengeluaranApiService.getAllPengeluaran()
-
     override suspend fun getPengeluaranById(idPengeluaran: String): Pengeluaran {
         return pengeluaranApiService.getPengeluaranById(idPengeluaran).data
     }
 }
-

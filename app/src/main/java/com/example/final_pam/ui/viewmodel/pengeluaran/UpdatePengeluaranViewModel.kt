@@ -8,6 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.model.Pengeluaran
 import com.example.final_pam.repository.PengeluaranRepository
+import com.example.final_pam.ui.view.pengeluaran.DestinasiUpdatePengeluaran
+import com.example.final_pam.ui.viewmodel.pengeluaran.InsertPengeluaranUiEvent
+import com.example.final_pam.ui.viewmodel.pengeluaran.InsertPengeluaranUiState
+import com.example.final_pam.ui.viewmodel.pengeluaran.toPengeluaran
+import com.example.final_pam.ui.viewmodel.pengeluaran.toUiStatePengeluaran
 import kotlinx.coroutines.launch
 
 class UpdatePengeluaranViewModel(
@@ -18,7 +23,7 @@ class UpdatePengeluaranViewModel(
     var updateUiState by mutableStateOf(InsertPengeluaranUiState())
         private set
 
-    private val _idPengeluaran: String = checkNotNull(savedStateHandle["Pengeluaran.ID_PENGELUARAN"])
+    private val _idPengeluaran: String = checkNotNull(savedStateHandle[DestinasiUpdatePengeluaran.ID_PENGELUARAN])
 
     init {
         viewModelScope.launch {
@@ -30,7 +35,7 @@ class UpdatePengeluaranViewModel(
         updateUiState = InsertPengeluaranUiState(insertUiEvent = insertUiEvent)
     }
 
-    fun updatePengeluaran() {
+    suspend fun updatePengeluaran() {
         viewModelScope.launch {
             try {
                 pengeluaranRepository.updatePengeluaran(_idPengeluaran, updateUiState.insertUiEvent.toPengeluaran())

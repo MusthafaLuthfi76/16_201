@@ -188,10 +188,16 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                 type = NavType.StringType
             })
         ) {
-            UpdatePengeluaranView(
-                onBack = { navController.popBackStack() },
-                onNavigate = { navController.popBackStack() }
-            )
+            val idPengeluaran = it.arguments?.getString(DestinasiUpdatePengeluaran.ID_PENGELUARAN)
+            if (!idPengeluaran.isNullOrEmpty()) {
+                UpdatePengeluaranView(
+                    onBack = { navController.popBackStack() },
+                    onNavigate = { navController.popBackStack() }
+                )
+            } else {
+                Log.e("PengelolaHalaman", "idPengeluaran is null or empty")
+                navController.popBackStack()
+            }
         }
     }
 }

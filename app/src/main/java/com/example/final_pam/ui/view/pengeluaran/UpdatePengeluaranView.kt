@@ -4,14 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,7 +22,7 @@ import kotlinx.coroutines.withContext
 object DestinasiUpdatePengeluaran : DestinasiNavigasi {
     override val route = "update_pengeluaran"
     override val titleRes = "Edit Pengeluaran"
-    const val ID_PENGELUARAN = "Id_pengeluaran"
+    const val ID_PENGELUARAN = "id_pengeluaran"
     val routesWithArg = "$route/{$ID_PENGELUARAN}"
 }
 
@@ -41,13 +34,13 @@ fun UpdatePengeluaranView(
     onNavigate: () -> Unit,
     viewModel: UpdatePengeluaranViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    // Akses aplikasi keuangan dari context
+    // Akses aplikasi keuangan untuk memuat data aset dan kategori
     val context = androidx.compose.ui.platform.LocalContext.current
     val aplikasiKeuangan = context.applicationContext as com.example.final_pam.application.KeuanganApplication
     val asetRepository = aplikasiKeuangan.container.asetRepository
     val kategoriRepository = aplikasiKeuangan.container.kategoriRepository
 
-    // Memuat data aset dan kategori dari repository
+    // Memuat data aset dan kategori
     LaunchedEffect(Unit) {
         Aset.loadData(asetRepository)
         KategoriDD.loadData(kategoriRepository)
@@ -95,4 +88,6 @@ fun UpdatePengeluaranView(
         )
     }
 }
+
+
 
