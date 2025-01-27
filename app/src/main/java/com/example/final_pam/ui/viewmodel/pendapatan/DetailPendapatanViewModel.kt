@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.final_pam.model.Pendapatan
 import com.example.final_pam.repository.PendapatanRepository
+import com.example.final_pam.ui.view.pendapatan.DestinasiDetailPendapatan
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -26,7 +27,7 @@ class PendapatanDetailViewModel(
     var pendapatanDetailState: PendapatanDetailUiState by mutableStateOf(PendapatanDetailUiState.Loading)
         private set
 
-    private val _idPendapatan: String = checkNotNull(savedStateHandle["id_pendapatan"])
+    private val _idPendapatan: String = checkNotNull(savedStateHandle[DestinasiDetailPendapatan.ID_PENDAPATAN])
 
     init {
         getPendapatanById()

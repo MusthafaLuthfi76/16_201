@@ -64,7 +64,7 @@ fun DetailKategoriView(
             retryAction = { viewModel.getKategoriById() },
             onDeleteClick = {
                 viewModel.deleteKategori(viewModel.kategoriDetailState.let { state ->
-                    if (state is KategoriDetailUiState.Success) state.kategori.Id_kategori else ""
+                    if (state is KategoriDetailUiState.Success) state.kategori.idKategori else ""
                 })
                 navigateBack()
             }
@@ -82,7 +82,7 @@ fun KategoriDetailStatus(
     when (detailUiState) {
         is KategoriDetailUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
         is KategoriDetailUiState.Success -> {
-            if (detailUiState.kategori.Id_kategori.isEmpty()) {
+            if (detailUiState.kategori.idKategori.isEmpty()) {
                 Box(
                     modifier = modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -116,7 +116,7 @@ fun KategoriDetailContent(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            KategoriDetailComponent(label = "ID Kategori", value = kategori.Id_kategori)
+            KategoriDetailComponent(label = "ID Kategori", value = kategori.idKategori)
             Divider(modifier = Modifier.padding(vertical = 8.dp))
             KategoriDetailComponent(label = "Nama Kategori", value = kategori.namaKategori)
 

@@ -1,12 +1,13 @@
 package com.example.final_pam.model
 
+
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Kategori(
-    @SerialName("id_kategori")
-    val Id_kategori: String,
+    @SerialName("Id_kategori")
+    val idKategori: String,
 
     @SerialName("Nama_kategori")
     val namaKategori: String

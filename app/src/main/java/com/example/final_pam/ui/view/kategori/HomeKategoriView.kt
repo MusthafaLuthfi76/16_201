@@ -75,7 +75,7 @@ fun HomeKategoriView(
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
             onDeleteClick = {
-                viewModel.deleteKategori(it.Id_kategori)
+                viewModel.deleteKategori(it.idKategori)
                 viewModel.getKategori()
             }
         )
@@ -102,7 +102,7 @@ fun KategoriHomeStatus(
                     kategori = kategoriUiState.kategori,
                     modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
-                        onDetailClick(it.Id_kategori)
+                        onDetailClick(it.idKategori)
                     },
                     onDeleteClick = {
                         onDeleteClick(it)
@@ -171,7 +171,7 @@ fun KategoriCard(
                     color = Color(0xFF00796B)
                 )
                 Text(
-                    text = "ID Kategori: ${kategori.Id_kategori}",
+                    text = "ID Kategori: ${kategori.idKategori}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF004D40)
                 )

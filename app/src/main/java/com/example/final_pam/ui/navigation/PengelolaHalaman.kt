@@ -1,5 +1,6 @@
 package com.example.final_pam.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -113,7 +114,7 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         composable(DestinasiHomePendapatan.route) {
             HomePendapatanView(
                 navigateToItemEntry = { navController.navigate(DestinasiInsertPendapatan.route) },
-                onDetailClick = { idPendapatan ->
+                onDetailClick = { idPendapatan -> // Perbaiki navigasi di sini
                     navController.navigate("${DestinasiDetailPendapatan.route}/$idPendapatan")
                 },
                 navigateBack = { navController.popBackStack() }
@@ -122,6 +123,7 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         composable(DestinasiInsertPendapatan.route) {
             InsertPendapatanView(navigateBack = { navController.popBackStack() })
         }
+
         composable(
             DestinasiDetailPendapatan.routesWithArg,
             arguments = listOf(navArgument(DestinasiDetailPendapatan.ID_PENDAPATAN) {
@@ -129,13 +131,18 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
             })
         ) {
             val idPendapatan = it.arguments?.getString(DestinasiDetailPendapatan.ID_PENDAPATAN)
-            idPendapatan?.let { id ->
+            Log.d("PengelolaHalaman", "Navigasi ke DetailPendapatanView dengan idPendapatan: $idPendapatan")
+            if (!idPendapatan.isNullOrEmpty()) {
                 DetailPendapatanView(
-                    navigateToItemUpdate = { navController.navigate("${DestinasiUpdatePendapatan.route}/$id") },
+                    navigateToItemUpdate = { navController.navigate("${DestinasiUpdatePendapatan.route}/$idPendapatan") },
                     navigateBack = { navController.popBackStack() }
                 )
+            } else {
+                Log.e("PengelolaHalaman", "idPendapatan is null or empty")
+                navController.popBackStack()
             }
         }
+
         composable(
             DestinasiUpdatePendapatan.routesWithArg,
             arguments = listOf(navArgument(DestinasiUpdatePendapatan.ID_PENDAPATAN) {

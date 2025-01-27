@@ -20,7 +20,7 @@ object KategoriDD {
                 if (response.status) {
                     // Mengubah data menjadi format "Id_kategori: Nama_kategori"
                     _options.value = response.data.map { kategori ->
-                        "${kategori.Id_kategori}: ${kategori.namaKategori}"
+                        "${kategori.idKategori}: ${kategori.namaKategori}"
                     }
                 }
             } catch (e: Exception) {

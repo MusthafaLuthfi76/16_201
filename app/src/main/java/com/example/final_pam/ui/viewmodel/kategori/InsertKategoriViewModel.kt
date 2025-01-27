@@ -38,7 +38,7 @@ data class InsertKategoriUiEvent(
 )
 
 fun InsertKategoriUiEvent.toKategori(): Kategori = Kategori(
-    Id_kategori = idKategori,
+    idKategori = idKategori,
     namaKategori = namaKategori
 )
 
@@ -47,7 +47,7 @@ fun Kategori.toUiStateKategori(): InsertKategoriUiState = InsertKategoriUiState(
 )
 
 fun Kategori.toInsertUiEvent(): InsertKategoriUiEvent = InsertKategoriUiEvent(
-    idKategori = Id_kategori,
+    idKategori = idKategori,
     namaKategori = namaKategori
 )
 
