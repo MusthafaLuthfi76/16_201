@@ -20,12 +20,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.final_pam.data.Aset
+import com.example.final_pam.data.KategoriDD
+import com.example.final_pam.ui.customwidget.DynamicSelectTextField
 import com.example.final_pam.ui.viewmodel.InsertPendapatanUiEvent
 import com.example.final_pam.ui.viewmodel.InsertPendapatanUiState
 import com.example.final_pam.ui.viewmodel.InsertPendapatanViewModel
@@ -43,6 +52,24 @@ fun InsertPendapatanView(
     modifier: Modifier = Modifier,
     viewModel: InsertPendapatanViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
+    // Akses aplikasi keuangan dari context
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val aplikasiKeuangan = context.applicationContext as com.example.final_pam.application.KeuanganApplication
+    val asetRepository = aplikasiKeuangan.container.asetRepository
+    val kategoriRepository = aplikasiKeuangan.container.kategoriRepository
+
+    // Memuat data aset dari repository
+    LaunchedEffect(Unit) {
+        Aset.loadData(asetRepository)
+        KategoriDD.loadData(kategoriRepository)
+    }
+
+    // Observasi data aset
+    val options by Aset.options.collectAsState(initial = emptyList())
+    val kategoriOptions by KategoriDD.options.collectAsState(initial = emptyList())
+    var selectedAset by remember { mutableStateOf("") }
+    var selectedKategori by remember { mutableStateOf("") }
+
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -65,6 +92,12 @@ fun InsertPendapatanView(
                     navigateBack()
                 }
             },
+            options = options,
+            selectedAset = selectedAset,
+            onSelectedAsetChange = { selectedAset = it },
+            kategoriOptions = kategoriOptions,
+            selectedKategori = selectedKategori,
+            onSelectedKategoriChange = { selectedKategori = it },
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -78,6 +111,12 @@ fun EntryBodyPendapatan(
     insertUiState: InsertPendapatanUiState,
     onPendapatanValueChange: (InsertPendapatanUiEvent) -> Unit,
     onSaveClick: () -> Unit,
+    options: List<String>,
+    selectedAset: String,
+    onSelectedAsetChange: (String) -> Unit,
+    kategoriOptions: List<String>,
+    selectedKategori: String,
+    onSelectedKategoriChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -87,6 +126,12 @@ fun EntryBodyPendapatan(
         FormInputPendapatan(
             insertUiEvent = insertUiState.insertUiEvent,
             onValueChange = onPendapatanValueChange,
+            options = options,
+            selectedAset = selectedAset,
+            onSelectedAsetChange = onSelectedAsetChange,
+            kategoriOptions = kategoriOptions,
+            selectedKategori = selectedKategori,
+            onSelectedKategoriChange = onSelectedKategoriChange,
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -105,6 +150,12 @@ fun FormInputPendapatan(
     insertUiEvent: InsertPendapatanUiEvent,
     modifier: Modifier = Modifier,
     onValueChange: (InsertPendapatanUiEvent) -> Unit = {},
+    options: List<String>,
+    selectedAset: String,
+    onSelectedAsetChange: (String) -> Unit,
+    kategoriOptions: List<String>,
+    selectedKategori: String,
+    onSelectedKategoriChange: (String) -> Unit,
     enabled: Boolean = true
 ) {
     Column(
@@ -119,21 +170,29 @@ fun FormInputPendapatan(
             enabled = enabled,
             singleLine = true
         )
-        OutlinedTextField(
-            value = insertUiEvent.idAset,
-            onValueChange = { onValueChange(insertUiEvent.copy(idAset = it)) },
-            label = { Text("ID Aset") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
+        // Dropdown untuk ID Aset
+        DynamicSelectTextField(
+            selectedValue = selectedAset,
+            options = options,
+            label = "ID Aset",
+            onValueChangedEvent = { value ->
+                val idAset = value.substringBefore(":").trim() // Ambil hanya Id_aset
+                onSelectedAsetChange(value)
+                onValueChange(insertUiEvent.copy(idAset = idAset))
+            },
+            modifier = Modifier.fillMaxWidth()
         )
-        OutlinedTextField(
-            value = insertUiEvent.idKategori,
-            onValueChange = { onValueChange(insertUiEvent.copy(idKategori = it)) },
-            label = { Text("ID Kategori") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
+        // Dropdown untuk ID Kategori
+        DynamicSelectTextField(
+            selectedValue = selectedKategori,
+            options = kategoriOptions,
+            label = "ID Kategori",
+            onValueChangedEvent = { value ->
+                val idKategori = value.substringBefore(":").trim() // Ambil hanya Id_kategori
+                onSelectedKategoriChange(value)
+                onValueChange(insertUiEvent.copy(idKategori = idKategori))
+            },
+            modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = insertUiEvent.tglTransaksi,
