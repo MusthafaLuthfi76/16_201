@@ -206,6 +206,12 @@ fun FormInputPengeluaran(
             enabled = enabled,
             singleLine = true
         )
+        Text(
+            text = "Format Tanggal: DD/MM/YYYY",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            modifier = Modifier.padding(start = 12.dp)
+        )
         OutlinedTextField(
             value = insertUiEvent.total.toString(),
             onValueChange = { onValueChange(insertUiEvent.copy(total = it.toIntOrNull() ?: 0)) },
