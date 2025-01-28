@@ -40,5 +40,10 @@ class HomeViewModel(
             }
         }
     }
+
+    fun refreshData() {
+        calculateSaldo()
+    }
 }
+
 

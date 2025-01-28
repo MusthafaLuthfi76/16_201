@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,6 +37,22 @@ fun HomeScreen(
     val totalPendapatan by remember { viewModel.totalPendapatan }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Home") },
+                actions = {
+                    IconButton(onClick = {
+                        // Memanggil fungsi untuk merefresh data
+                        viewModel.refreshData()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh, // Icon Refresh
+                            contentDescription = "Refresh Data"
+                        )
+                    }
+                }
+            )
+        },
         bottomBar = {
             BottomAppBar {
                 NavigationBarItem(
@@ -144,6 +161,7 @@ fun HomeScreen(
         }
     }
 }
+
 
 // Extension function to format currency
 fun Int.formatCurrency(): String {
