@@ -33,6 +33,7 @@ fun UpdateKategoriView(
     onNavigate: () -> Unit,
     viewModel: UpdateKategoriViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
+    var showError by remember { mutableStateOf(false) } // Untuk validasi error
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -52,15 +53,21 @@ fun UpdateKategoriView(
             insertUiState = viewModel.updateUiState,
             onKategoriValueChange = viewModel::updateInsertKategoriState,
             onSaveClick = {
-                coroutineScope.launch {
-                    viewModel.updateKategori()
-                    delay(600) // Simulasi loading jika diperlukan
-                    withContext(Dispatchers.Main) {
-                        onNavigate()
+                val event = viewModel.updateUiState.insertUiEvent
+                // Validasi input
+                if (event.idKategori.isBlank() || event.namaKategori.isBlank()) {
+                    showError = true
+                } else {
+                    coroutineScope.launch {
+                        viewModel.updateKategori()
+                        delay(600) // Simulasi loading jika diperlukan
+                        withContext(Dispatchers.Main) {
+                            onNavigate()
+                        }
                     }
                 }
-            }
+            },
+            showError = showError // Parameter validasi
         )
     }
 }
-

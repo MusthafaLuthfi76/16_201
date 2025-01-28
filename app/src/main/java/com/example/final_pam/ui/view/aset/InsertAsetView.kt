@@ -25,6 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,8 +47,10 @@ fun InsertAsetView(
     modifier: Modifier = Modifier,
     viewModel: InsertAsetViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
+    var showError by remember { mutableStateOf(false) } // Untuk validasi error
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -60,11 +66,18 @@ fun InsertAsetView(
             insertUiState = viewModel.uiState,
             onAsetValueChange = viewModel::updateInsertAsetState,
             onSaveClick = {
-                coroutineScope.launch {
-                    viewModel.insertAset()
-                    navigateBack()
+                val event = viewModel.uiState.insertUiEvent
+                // Validasi input
+                if (event.idAset.isBlank() || event.namaAset.isBlank()) {
+                    showError = true
+                } else {
+                    coroutineScope.launch {
+                        viewModel.insertAset()
+                        navigateBack()
+                    }
                 }
             },
+            showError = showError, // Pass error state ke form
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -78,6 +91,7 @@ fun EntryBodyAset(
     insertUiState: InsertAsetUiState,
     onAsetValueChange: (InsertAsetUiEvent) -> Unit,
     onSaveClick: () -> Unit,
+    showError: Boolean, // Parameter validasi
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -87,6 +101,7 @@ fun EntryBodyAset(
         FormInputAset(
             insertUiEvent = insertUiState.insertUiEvent,
             onValueChange = onAsetValueChange,
+            showError = showError, // Pass error state ke form
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -105,6 +120,7 @@ fun FormInputAset(
     insertUiEvent: InsertAsetUiEvent,
     modifier: Modifier = Modifier,
     onValueChange: (InsertAsetUiEvent) -> Unit = {},
+    showError: Boolean, // Parameter untuk validasi error
     enabled: Boolean = true
 ) {
     Column(
@@ -117,26 +133,25 @@ fun FormInputAset(
             label = { Text("ID Aset") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = showError && insertUiEvent.idAset.isBlank()
         )
+        if (showError && insertUiEvent.idAset.isBlank()) {
+            Text("ID Aset tidak boleh kosong", color = MaterialTheme.colorScheme.error)
+        }
+
         OutlinedTextField(
             value = insertUiEvent.namaAset,
             onValueChange = { onValueChange(insertUiEvent.copy(namaAset = it)) },
             label = { Text("Nama Aset") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = showError && insertUiEvent.namaAset.isBlank()
         )
-        if (enabled) {
-            Text(
-                text = "Isi Semua Data",
-                modifier = Modifier.padding(12.dp)
-            )
+        if (showError && insertUiEvent.namaAset.isBlank()) {
+            Text("Nama Aset tidak boleh kosong", color = MaterialTheme.colorScheme.error)
         }
-        Divider(
-            thickness = 8.dp,
-            modifier = Modifier.padding(12.dp)
-        )
     }
 }
 

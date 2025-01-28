@@ -69,6 +69,7 @@ fun InsertPendapatanView(
     val kategoriOptions by KategoriDD.options.collectAsState(initial = emptyList())
     var selectedAset by remember { mutableStateOf("") }
     var selectedKategori by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) } // Untuk validasi error
 
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -87,9 +88,21 @@ fun InsertPendapatanView(
             insertUiState = viewModel.uiState,
             onPendapatanValueChange = viewModel::updateInsertPendapatanState,
             onSaveClick = {
-                coroutineScope.launch {
-                    viewModel.insertPendapatan()
-                    navigateBack()
+                // Validasi input sebelum menyimpan
+                val event = viewModel.uiState.insertUiEvent
+                if (event.idPendapatan.isBlank() ||
+                    selectedAset.isBlank() ||
+                    selectedKategori.isBlank() ||
+                    event.tglTransaksi.isBlank() ||
+                    event.total <= 0 ||
+                    event.catatan.isBlank()
+                ) {
+                    showError = true // Tampilkan pesan error
+                } else {
+                    coroutineScope.launch {
+                        viewModel.insertPendapatan()
+                        navigateBack()
+                    }
                 }
             },
             options = options,
@@ -98,6 +111,7 @@ fun InsertPendapatanView(
             kategoriOptions = kategoriOptions,
             selectedKategori = selectedKategori,
             onSelectedKategoriChange = { selectedKategori = it },
+            showError = showError, // Menyediakan state error ke form
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -105,6 +119,7 @@ fun InsertPendapatanView(
         )
     }
 }
+
 
 @Composable
 fun EntryBodyPendapatan(
@@ -117,6 +132,7 @@ fun EntryBodyPendapatan(
     kategoriOptions: List<String>,
     selectedKategori: String,
     onSelectedKategoriChange: (String) -> Unit,
+    showError: Boolean, // Menampilkan error
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -132,6 +148,7 @@ fun EntryBodyPendapatan(
             kategoriOptions = kategoriOptions,
             selectedKategori = selectedKategori,
             onSelectedKategoriChange = onSelectedKategoriChange,
+            showError = showError, // Pass error state ke form
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -156,6 +173,7 @@ fun FormInputPendapatan(
     kategoriOptions: List<String>,
     selectedKategori: String,
     onSelectedKategoriChange: (String) -> Unit,
+    showError: Boolean, // Parameter untuk menampilkan error
     enabled: Boolean = true
 ) {
     Column(
@@ -168,32 +186,42 @@ fun FormInputPendapatan(
             label = { Text("ID Pendapatan") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = showError && insertUiEvent.idPendapatan.isBlank()
         )
-        // Dropdown untuk ID Aset
+        if (showError && insertUiEvent.idPendapatan.isBlank()) {
+            Text("ID Pendapatan tidak boleh kosong", color = MaterialTheme.colorScheme.error)
+        }
         DynamicSelectTextField(
             selectedValue = selectedAset,
             options = options,
             label = "ID Aset",
             onValueChangedEvent = { value ->
-                val idAset = value.substringBefore(":").trim() // Ambil hanya Id_aset
+                val idAset = value.substringBefore(":").trim()
                 onSelectedAsetChange(value)
                 onValueChange(insertUiEvent.copy(idAset = idAset))
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = showError && selectedAset.isBlank()
         )
-        // Dropdown untuk ID Kategori
+        if (showError && selectedAset.isBlank()) {
+            Text("ID Aset tidak boleh kosong", color = MaterialTheme.colorScheme.error)
+        }
         DynamicSelectTextField(
             selectedValue = selectedKategori,
             options = kategoriOptions,
             label = "ID Kategori",
             onValueChangedEvent = { value ->
-                val idKategori = value.substringBefore(":").trim() // Ambil hanya Id_kategori
+                val idKategori = value.substringBefore(":").trim()
                 onSelectedKategoriChange(value)
                 onValueChange(insertUiEvent.copy(idKategori = idKategori))
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = showError && selectedKategori.isBlank()
         )
+        if (showError && selectedKategori.isBlank()) {
+            Text("ID Kategori tidak boleh kosong", color = MaterialTheme.colorScheme.error)
+        }
         OutlinedTextField(
             value = insertUiEvent.tglTransaksi,
             onValueChange = { onValueChange(insertUiEvent.copy(tglTransaksi = it)) },
@@ -201,14 +229,12 @@ fun FormInputPendapatan(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = showError && insertUiEvent.tglTransaksi.isBlank()
         )
-        Text(
-            text = "Format Tanggal: DD/MM/YYYY",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-            modifier = Modifier.padding(start = 12.dp)
-        )
+        if (showError && insertUiEvent.tglTransaksi.isBlank()) {
+            Text("Tanggal Transaksi tidak boleh kosong", color = MaterialTheme.colorScheme.error)
+        }
         OutlinedTextField(
             value = insertUiEvent.total.toString(),
             onValueChange = { onValueChange(insertUiEvent.copy(total = it.toIntOrNull() ?: 0)) },
@@ -216,25 +242,23 @@ fun FormInputPendapatan(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = showError && insertUiEvent.total <= 0
         )
+        if (showError && insertUiEvent.total <= 0) {
+            Text("Total harus lebih besar dari 0", color = MaterialTheme.colorScheme.error)
+        }
         OutlinedTextField(
             value = insertUiEvent.catatan,
             onValueChange = { onValueChange(insertUiEvent.copy(catatan = it)) },
             label = { Text("Catatan") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = showError && insertUiEvent.catatan.isBlank()
         )
-        if (enabled) {
-            Text(
-                text = "Isi Semua Data",
-                modifier = Modifier.padding(12.dp)
-            )
+        if (showError && insertUiEvent.catatan.isBlank()) {
+            Text("Catatan tidak boleh kosong", color = MaterialTheme.colorScheme.error)
         }
-        Divider(
-            thickness = 8.dp,
-            modifier = Modifier.padding(12.dp)
-        )
     }
 }

@@ -53,6 +53,7 @@ fun UpdatePendapatanView(
     // State untuk menyimpan ID Aset dan ID Kategori yang dipilih
     var selectedAset by remember { mutableStateOf(viewModel.updateUiState.insertUiEvent.idAset) }
     var selectedKategori by remember { mutableStateOf(viewModel.updateUiState.insertUiEvent.idKategori) }
+    var showError by remember { mutableStateOf(false) } // Tambahkan validasi
 
     // Update state jika data pendapatan telah dimuat
     LaunchedEffect(viewModel.updateUiState.insertUiEvent.idAset, viewModel.updateUiState.insertUiEvent.idKategori) {
@@ -83,11 +84,23 @@ fun UpdatePendapatanView(
                 selectedKategori = updatedEvent.idKategori
             },
             onSaveClick = {
-                coroutineScope.launch {
-                    viewModel.updatePendapatan()
-                    delay(600) // Simulasi loading jika diperlukan
-                    withContext(Dispatchers.Main) {
-                        onNavigate()
+                // Validasi sebelum menyimpan
+                val event = viewModel.updateUiState.insertUiEvent
+                if (event.idPendapatan.isBlank() ||
+                    selectedAset.isBlank() ||
+                    selectedKategori.isBlank() ||
+                    event.tglTransaksi.isBlank() ||
+                    event.total <= 0 ||
+                    event.catatan.isBlank()
+                ) {
+                    showError = true // Tampilkan pesan error jika ada input kosong
+                } else {
+                    coroutineScope.launch {
+                        viewModel.updatePendapatan()
+                        delay(600) // Simulasi loading jika diperlukan
+                        withContext(Dispatchers.Main) {
+                            onNavigate()
+                        }
                     }
                 }
             },
@@ -102,7 +115,8 @@ fun UpdatePendapatanView(
             onSelectedKategoriChange = {
                 selectedKategori = it
                 viewModel.updateInsertPendapatanState(viewModel.updateUiState.insertUiEvent.copy(idKategori = it))
-            }
+            },
+            showError = showError // Parameter validasi
         )
     }
 }

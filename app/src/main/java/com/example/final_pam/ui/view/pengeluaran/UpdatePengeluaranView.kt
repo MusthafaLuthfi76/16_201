@@ -50,11 +50,10 @@ fun UpdatePengeluaranView(
     val options by Aset.options.collectAsState(initial = emptyList())
     val kategoriOptions by KategoriDD.options.collectAsState(initial = emptyList())
 
-    // State untuk menyimpan ID Aset dan ID Kategori yang dipilih
     var selectedAset by remember { mutableStateOf(viewModel.updateUiState.insertUiEvent.idAset) }
     var selectedKategori by remember { mutableStateOf(viewModel.updateUiState.insertUiEvent.idKategori) }
+    var showError by remember { mutableStateOf(false) } // Tambahkan validasi
 
-    // Update state jika data pengeluaran telah dimuat
     LaunchedEffect(viewModel.updateUiState.insertUiEvent.idAset, viewModel.updateUiState.insertUiEvent.idKategori) {
         selectedAset = viewModel.updateUiState.insertUiEvent.idAset
         selectedKategori = viewModel.updateUiState.insertUiEvent.idKategori
@@ -70,7 +69,7 @@ fun UpdatePengeluaranView(
                 title = DestinasiUpdatePengeluaran.titleRes,
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
-                navigateUp = onBack,
+                navigateUp = onBack
             )
         }
     ) { padding ->
@@ -83,27 +82,38 @@ fun UpdatePengeluaranView(
                 selectedKategori = updatedEvent.idKategori
             },
             onSaveClick = {
-                coroutineScope.launch {
-                    viewModel.updatePengeluaran()
-                    delay(600) // Simulasi loading jika diperlukan
-                    withContext(Dispatchers.Main) {
-                        onNavigate()
+                val event = viewModel.updateUiState.insertUiEvent
+                if (event.idPengeluaran.isBlank() ||
+                    selectedAset.isBlank() ||
+                    selectedKategori.isBlank() ||
+                    event.tglTransaksi.isBlank() ||
+                    event.total <= 0 ||
+                    event.catatan.isBlank()
+                ) {
+                    showError = true // Validasi gagal
+                } else {
+                    coroutineScope.launch {
+                        viewModel.updatePengeluaran()
+                        delay(600)
+                        withContext(Dispatchers.Main) {
+                            onNavigate()
+                        }
                     }
                 }
             },
-            options = options, // Data aset untuk dropdown
-            selectedAset = selectedAset, // Aset yang dipilih
+            options = options,
+            selectedAset = selectedAset,
             onSelectedAsetChange = {
                 selectedAset = it
                 viewModel.updateInsertPengeluaranState(viewModel.updateUiState.insertUiEvent.copy(idAset = it))
             },
-            kategoriOptions = kategoriOptions, // Data kategori untuk dropdown
-            selectedKategori = selectedKategori, // Kategori yang dipilih
+            kategoriOptions = kategoriOptions,
+            selectedKategori = selectedKategori,
             onSelectedKategoriChange = {
                 selectedKategori = it
                 viewModel.updateInsertPengeluaranState(viewModel.updateUiState.insertUiEvent.copy(idKategori = it))
-            }
+            },
+            showError = showError // Pass error state
         )
     }
 }
-

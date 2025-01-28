@@ -22,10 +22,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
@@ -43,6 +47,7 @@ fun InsertKategoriView(
     modifier: Modifier = Modifier,
     viewModel: InsertKategoriViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
+    var showError by remember { mutableStateOf(false) } // Untuk validasi error
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -60,11 +65,18 @@ fun InsertKategoriView(
             insertUiState = viewModel.uiState,
             onKategoriValueChange = viewModel::updateInsertKategoriState,
             onSaveClick = {
-                coroutineScope.launch {
-                    viewModel.insertKategori()
-                    navigateBack()
+                val event = viewModel.uiState.insertUiEvent
+                // Validasi input
+                if (event.idKategori.isBlank() || event.namaKategori.isBlank()) {
+                    showError = true
+                } else {
+                    coroutineScope.launch {
+                        viewModel.insertKategori()
+                        navigateBack()
+                    }
                 }
             },
+            showError = showError, // Pass error state
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -78,6 +90,7 @@ fun EntryBodyKategori(
     insertUiState: InsertKategoriUiState,
     onKategoriValueChange: (InsertKategoriUiEvent) -> Unit,
     onSaveClick: () -> Unit,
+    showError: Boolean, // Parameter untuk validasi error
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -87,6 +100,7 @@ fun EntryBodyKategori(
         FormInputKategori(
             insertUiEvent = insertUiState.insertUiEvent,
             onValueChange = onKategoriValueChange,
+            showError = showError, // Pass error state ke form
             modifier = Modifier.fillMaxWidth()
         )
         Button(
@@ -105,6 +119,7 @@ fun FormInputKategori(
     insertUiEvent: InsertKategoriUiEvent,
     modifier: Modifier = Modifier,
     onValueChange: (InsertKategoriUiEvent) -> Unit = {},
+    showError: Boolean, // Parameter untuk validasi error
     enabled: Boolean = true
 ) {
     Column(
@@ -117,25 +132,24 @@ fun FormInputKategori(
             label = { Text("ID Kategori") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = showError && insertUiEvent.idKategori.isBlank()
         )
+        if (showError && insertUiEvent.idKategori.isBlank()) {
+            Text("ID Kategori tidak boleh kosong", color = MaterialTheme.colorScheme.error)
+        }
+
         OutlinedTextField(
             value = insertUiEvent.namaKategori,
             onValueChange = { onValueChange(insertUiEvent.copy(namaKategori = it)) },
             label = { Text("Nama Kategori") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = showError && insertUiEvent.namaKategori.isBlank()
         )
-        if (enabled) {
-            Text(
-                text = "Isi Semua Data",
-                modifier = Modifier.padding(12.dp)
-            )
+        if (showError && insertUiEvent.namaKategori.isBlank()) {
+            Text("Nama Kategori tidak boleh kosong", color = MaterialTheme.colorScheme.error)
         }
-        Divider(
-            thickness = 8.dp,
-            modifier = Modifier.padding(12.dp)
-        )
     }
 }
