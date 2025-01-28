@@ -204,7 +204,7 @@ fun PendapatanCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Catatan: ${pendapatan.catatan}",
+                    text = "${pendapatan.catatan}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color.Black
                 )

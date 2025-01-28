@@ -6,12 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -26,9 +29,11 @@ import com.example.final_pam.R
 import com.example.final_pam.model.Pengeluaran
 import com.example.final_pam.ui.customwidget.CostumeTopAppBar
 import com.example.final_pam.ui.navigation.DestinasiNavigasi
+import com.example.final_pam.ui.viewmodel.HomeViewModel
 import com.example.final_pam.ui.viewmodel.PenyediaViewModel
 import com.example.final_pam.ui.viewmodel.pengeluaran.PengeluaranHomeUiState
 import com.example.final_pam.ui.viewmodel.pengeluaran.PengeluaranHomeViewModel
+import kotlinx.coroutines.launch
 
 object DestinasiHomePengeluaran : DestinasiNavigasi {
     override val route = "homePengeluaran"
@@ -42,9 +47,12 @@ fun HomePengeluaranView(
     modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit = {},
     viewModel: PengeluaranHomeViewModel = viewModel(factory = PenyediaViewModel.Factory),
+    homeViewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory),
     navigateBack: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val saldo by homeViewModel.saldo // Mengambil saldo dari HomeViewModel
+    var showDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -55,13 +63,20 @@ fun HomePengeluaranView(
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
                     viewModel.getPengeluaran()
+                    homeViewModel.refreshData() // Refresh saldo
                 },
                 navigateUp = navigateBack
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = navigateToItemEntry,
+                onClick = {
+                    if (saldo < 0) {
+                        showDialog = true
+                    } else {
+                        navigateToItemEntry()
+                    }
+                },
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(18.dp)
             ) {
@@ -69,6 +84,29 @@ fun HomePengeluaranView(
             }
         }
     ) { innerPadding ->
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Saldo Minus") },
+                text = { Text("Keuangan Anda sudah minus, apakah Anda yakin ingin menambah data pengeluaran?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showDialog = false
+                            navigateToItemEntry()
+                        }
+                    ) {
+                        Text("Iya")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("Batal")
+                    }
+                }
+            )
+        }
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -88,7 +126,6 @@ fun HomePengeluaranView(
         }
     }
 }
-
 
 @Composable
 fun PengeluaranHomeStatus(
@@ -204,7 +241,7 @@ fun PengeluaranCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Kategori: ${pengeluaran.Id_Kategori}",
+                    text = " ${pengeluaran.catatan}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color.Black
                 )
