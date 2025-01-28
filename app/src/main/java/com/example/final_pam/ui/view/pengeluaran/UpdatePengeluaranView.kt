@@ -49,8 +49,16 @@ fun UpdatePengeluaranView(
     // Observasi data aset dan kategori
     val options by Aset.options.collectAsState(initial = emptyList())
     val kategoriOptions by KategoriDD.options.collectAsState(initial = emptyList())
-    var selectedAset by remember { mutableStateOf("") }
-    var selectedKategori by remember { mutableStateOf("") }
+
+    // State untuk menyimpan ID Aset dan ID Kategori yang dipilih
+    var selectedAset by remember { mutableStateOf(viewModel.updateUiState.insertUiEvent.idAset) }
+    var selectedKategori by remember { mutableStateOf(viewModel.updateUiState.insertUiEvent.idKategori) }
+
+    // Update state jika data pengeluaran telah dimuat
+    LaunchedEffect(viewModel.updateUiState.insertUiEvent.idAset, viewModel.updateUiState.insertUiEvent.idKategori) {
+        selectedAset = viewModel.updateUiState.insertUiEvent.idAset
+        selectedKategori = viewModel.updateUiState.insertUiEvent.idKategori
+    }
 
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -69,7 +77,11 @@ fun UpdatePengeluaranView(
         EntryBodyPengeluaran(
             modifier = Modifier.padding(padding),
             insertUiState = viewModel.updateUiState,
-            onPengeluaranValueChange = viewModel::updateInsertPengeluaranState,
+            onPengeluaranValueChange = { updatedEvent ->
+                viewModel.updateInsertPengeluaranState(updatedEvent)
+                selectedAset = updatedEvent.idAset
+                selectedKategori = updatedEvent.idKategori
+            },
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.updatePengeluaran()
@@ -81,13 +93,17 @@ fun UpdatePengeluaranView(
             },
             options = options, // Data aset untuk dropdown
             selectedAset = selectedAset, // Aset yang dipilih
-            onSelectedAsetChange = { selectedAset = it }, // Callback ketika aset dipilih
+            onSelectedAsetChange = {
+                selectedAset = it
+                viewModel.updateInsertPengeluaranState(viewModel.updateUiState.insertUiEvent.copy(idAset = it))
+            },
             kategoriOptions = kategoriOptions, // Data kategori untuk dropdown
             selectedKategori = selectedKategori, // Kategori yang dipilih
-            onSelectedKategoriChange = { selectedKategori = it } // Callback ketika kategori dipilih
+            onSelectedKategoriChange = {
+                selectedKategori = it
+                viewModel.updateInsertPengeluaranState(viewModel.updateUiState.insertUiEvent.copy(idKategori = it))
+            }
         )
     }
 }
-
-
 

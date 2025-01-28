@@ -214,7 +214,6 @@ fun PengeluaranLayout(
     }
 }
 
-
 @Composable
 fun PengeluaranCard(
     pengeluaran: Pengeluaran,
