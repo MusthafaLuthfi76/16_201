@@ -17,7 +17,9 @@ sealed class PengeluaranHomeUiState {
     object Loading : PengeluaranHomeUiState()
 }
 
-class PengeluaranHomeViewModel(private val pengeluaranRepository: PengeluaranRepository) : ViewModel() {
+class PengeluaranHomeViewModel(
+    private val pengeluaranRepository: PengeluaranRepository
+) : ViewModel() {
     var pengeluaranUIState: PengeluaranHomeUiState by mutableStateOf(PengeluaranHomeUiState.Loading)
         private set
 
@@ -51,4 +53,3 @@ class PengeluaranHomeViewModel(private val pengeluaranRepository: PengeluaranRep
         }
     }
 }
-

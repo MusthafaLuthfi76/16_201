@@ -162,7 +162,6 @@ fun HomeScreen(
     }
 }
 
-
 // Extension function to format currency
 fun Int.formatCurrency(): String {
     return String.format("%,d", this).replace(',', '.')

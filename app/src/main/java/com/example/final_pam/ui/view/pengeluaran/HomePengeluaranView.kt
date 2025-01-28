@@ -45,6 +45,7 @@ fun HomePengeluaranView(
     navigateBack: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -68,18 +69,26 @@ fun HomePengeluaranView(
             }
         }
     ) { innerPadding ->
-        PengeluaranHomeStatus(
-            homeUiState = viewModel.pengeluaranUIState,
-            retryAction = { viewModel.getPengeluaran() },
-            modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick,
-            onDeleteClick = {
-                viewModel.deletePengeluaran(it.Id_Pengeluaran)
-                viewModel.getPengeluaran()
-            }
-        )
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            // Status Data Pengeluaran
+            PengeluaranHomeStatus(
+                homeUiState = viewModel.pengeluaranUIState,
+                retryAction = { viewModel.getPengeluaran() },
+                modifier = Modifier.fillMaxSize(),
+                onDetailClick = onDetailClick,
+                onDeleteClick = {
+                    viewModel.deletePengeluaran(it.Id_Pengeluaran)
+                    viewModel.getPengeluaran()
+                }
+            )
+        }
     }
 }
+
 
 @Composable
 fun PengeluaranHomeStatus(
@@ -91,7 +100,7 @@ fun PengeluaranHomeStatus(
 ) {
     when (homeUiState) {
         is PengeluaranHomeUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
-        is PengeluaranHomeUiState.Success ->
+        is PengeluaranHomeUiState.Success -> {
             if (homeUiState.pengeluaran.isEmpty()) {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "Tidak ada data pengeluaran")
@@ -108,9 +117,11 @@ fun PengeluaranHomeStatus(
                     }
                 )
             }
+        }
         is PengeluaranHomeUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
     }
 }
+
 
 // Menampilkan loading message
 @Composable
@@ -166,6 +177,7 @@ fun PengeluaranLayout(
     }
 }
 
+
 @Composable
 fun PengeluaranCard(
     pengeluaran: Pengeluaran,
@@ -178,13 +190,12 @@ fun PengeluaranCard(
             .padding(8.dp)
             .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFCDD2)), // Warna merah
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFE0F7FA))
                 .padding(16.dp)
         ) {
             // Informasi pengeluaran
@@ -195,17 +206,17 @@ fun PengeluaranCard(
                 Text(
                     text = "Kategori: ${pengeluaran.Id_Kategori}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color(0xFF00796B)
+                    color = Color.Black
                 )
                 Text(
                     text = "Tanggal: ${pengeluaran.tglTransaksi}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF004D40)
+                    color = Color.Gray
                 )
                 Text(
                     text = "Total: Rp ${pengeluaran.total}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF004D40)
+                    color = Color.Gray
                 )
             }
 
