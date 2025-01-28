@@ -45,6 +45,7 @@ fun HomePendapatanView(
     navigateBack: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -68,18 +69,26 @@ fun HomePendapatanView(
             }
         }
     ) { innerPadding ->
-        PendapatanHomeStatus(
-            homeUiState = viewModel.pendapatanUIState,
-            retryAction = { viewModel.getPendapatan() },
-            modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick,
-            onDeleteClick = {
-                viewModel.deletePendapatan(it.Id_Pendapatan)
-                viewModel.getPendapatan()
-            }
-        )
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            // Status Data Pendapatan
+            PendapatanHomeStatus(
+                homeUiState = viewModel.pendapatanUIState,
+                retryAction = { viewModel.getPendapatan() },
+                modifier = Modifier.fillMaxSize(),
+                onDetailClick = onDetailClick,
+                onDeleteClick = {
+                    viewModel.deletePendapatan(it.Id_Pendapatan)
+                    viewModel.getPendapatan()
+                }
+            )
+        }
     }
 }
+
 
 @Composable
 fun PendapatanHomeStatus(
@@ -91,7 +100,7 @@ fun PendapatanHomeStatus(
 ) {
     when (homeUiState) {
         is PendapatanHomeUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
-        is PendapatanHomeUiState.Success ->
+        is PendapatanHomeUiState.Success -> {
             if (homeUiState.pendapatan.isEmpty()) {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "Tidak ada data pendapatan")
@@ -108,6 +117,7 @@ fun PendapatanHomeStatus(
                     }
                 )
             }
+        }
         is PendapatanHomeUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
     }
 }
@@ -154,14 +164,14 @@ fun PendapatanLayout(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(pendapatan) { pendapatan ->
+        items(pendapatan) { pendapatanItem ->
             PendapatanCard(
-                pendapatan = pendapatan,
+                pendapatan = pendapatanItem,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onDetailClick(pendapatan) },
+                    .clickable { onDetailClick(pendapatanItem) },
                 onDeleteClick = {
-                    onDeleteClick(pendapatan)
+                    onDeleteClick(pendapatanItem)
                 }
             )
         }
@@ -180,31 +190,37 @@ fun PendapatanCard(
             .padding(8.dp)
             .shadow(8.dp, shape = RoundedCornerShape(12.dp)),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFC8E6C9)), // Warna hijau
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFE0F7FA))
                 .padding(16.dp)
         ) {
+            // Informasi pendapatan
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = pendapatan.catatan,
+                    text = "Catatan: ${pendapatan.catatan}",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color(0xFF00796B)
+                    color = Color.Black
                 )
                 Text(
-                    text = "ID Pendapatan: ${pendapatan.Id_Pendapatan}",
+                    text = "Tanggal: ${pendapatan.tglTransaksi}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF004D40)
+                    color = Color.Gray
+                )
+                Text(
+                    text = "Total: Rp ${pendapatan.total}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
                 )
             }
 
+            // Tombol delete
             IconButton(onClick = { onDeleteClick(pendapatan) }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
